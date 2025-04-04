@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:project/others/theme.dart'; // Importa el tema
+import 'package:project/others/theme.dart'; // Import the theme
+import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -12,6 +15,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
+      }
     });
   }
 
@@ -27,37 +36,58 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildCustomButton(icon: Icons.local_hospital, label: 'Hospital', onTap: () {}),
-                _buildCustomButton(icon: Icons.medical_services, label: 'Medicinas', onTap: () {}),
+                _buildCustomButton(
+                  key: const ValueKey('hospital_button'),
+                  icon: Icons.local_hospital,
+                  label: 'Hospital',
+                  onTap: () {},
+                ),
+                _buildCustomButton(
+                  key: const ValueKey('medicines_button'),
+                  icon: Icons.medical_services,
+                  label: 'Medicines',
+                  onTap: () {},
+                ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildCustomButton(icon: Icons.people, label: 'Doctores', onTap: () {}),
-                _buildCustomButton(icon: Icons.event, label: 'Citas', onTap: () {}),
+                _buildCustomButton(
+                  key: const ValueKey('doctors_button'),
+                  icon: Icons.people,
+                  label: 'Doctors',
+                  onTap: () {},
+                ),
+                _buildCustomButton(
+                  key: const ValueKey('appointments_button'),
+                  icon: Icons.event,
+                  label: 'Appointments',
+                  onTap: () {},
+                ),
               ],
             ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).primaryColor, // Color azul sanitario
+        backgroundColor: Theme.of(context).primaryColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: 'Medicinas'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: 'Medicines'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
   }
 
   Widget _buildCustomButton({
+    Key? key,
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -66,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
+          key: key,
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,
@@ -73,14 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            padding: EdgeInsets.symmetric(vertical: 30),
+            padding: const EdgeInsets.symmetric(vertical: 30),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 50),
-              SizedBox(height: 8),
-              Text(label, style: TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text(label, style: const TextStyle(fontSize: 18)),
             ],
           ),
         ),
