@@ -23,6 +23,13 @@ class ProfileScreen extends StatelessWidget {
             _buildSectionTitle(context, 'Medications'),
             Text('No medications registered.'),
             SizedBox(height: 20),
+            _buildSectionTitle(context, 'Appointments'),
+            Text('No appointments scheduled.'),
+            SizedBox(height: 20),
+            _buildProfileDetail(context, 'Mood', 'Not specified'),
+            _buildProfileDetail(context, 'Emergency Contact', 'Not provided'),
+            _buildProfileDetail(context, 'Health Points', '0'),
+            SizedBox(height: 30),
             Center(
               child: ElevatedButton(
                 onPressed: () {
