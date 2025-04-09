@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/others/theme.dart'; // Import the theme
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 import 'package:project/views/appointments_screen.dart';
-
+import 'package:project/views/medication_screen.dart'; // Import the medication_screen
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -47,7 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey('medicines_button'),
                   icon: Icons.medical_services,
                   label: 'Medicines',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const medication_screen()),
+                    );
+                  },
                 ),
               ],
             ),
