@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/home_screen.dart';
+import 'package:project/views/home_screen.dart';             // Paciente
+import 'package:project/views/doctor_home_screen.dart';     // Doctor
 import 'package:project/views/authenthication/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -12,15 +15,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _login() {
-    // 🔹 Aquí iría la lógica de autenticación con backend
-    if (_emailController.text == "test@email.com" && _passwordController.text == "123456") {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email == "doctor@email.com" && password == "123456") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()), // Navega a la pantalla principal
+        MaterialPageRoute(builder: (context) => const DoctorHomeScreen()),
+      );
+    } else if (email == "paciente@email.com" && password == "123456") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Credenciales incorrectas')),
+        const SnackBar(content: Text('Credenciales incorrectas')),
       );
     }
   }
@@ -28,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignUpScreen()), // Navega a la pantalla de registro
+      MaterialPageRoute(builder: (context) => SignUpScreen()),
     );
   }
 
@@ -41,27 +51,36 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Bienvenido a HealTrack", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
+              const Text(
+                "Bienvenido a HealTrack",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: "Correo electrónico", border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: "Correo electrónico",
+                  border: OutlineInputBorder(),
+                ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: "Contraseña", border: OutlineInputBorder()),
                 obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Contraseña",
+                  border: OutlineInputBorder(),
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
-                child: Text("Iniciar sesión"),
+                child: const Text("Iniciar sesión"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: _navigateToSignUp,
-                child: Text("¿No tienes cuenta? Regístrate"),
+                child: const Text("¿No tienes cuenta? Regístrate"),
               ),
             ],
           ),
