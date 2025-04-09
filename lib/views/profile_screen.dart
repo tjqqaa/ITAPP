@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:project/views/home_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  int _selectedIndex = 1;
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+    // No hacemos nada si el índice es 1 (Perfil), porque ya estamos ahí
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(context, '', ''), // Initially without data
+            _buildProfileHeader(context, '', ''),
             SizedBox(height: 20),
             _buildProfileDetail(context, 'Phone Number', 'Not provided'),
             _buildProfileDetail(context, 'Date of Birth', 'Not provided'),
@@ -33,13 +51,7 @@ class ProfileScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Implement logic to edit the profile here
-                  // print('Edit profile'); // Removed print statement for production
-                  // Example of what you might do instead:
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => EditProfileScreen()),
-                  // );
+                  // Aquí puedes navegar a EditProfileScreen si lo implementas
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
@@ -54,6 +66,17 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
       ),
     );
   }
@@ -72,22 +95,16 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  'Name:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('Name:', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(width: 8),
-                Text(''), // Name will be added here
+                Text(name),
               ],
             ),
             Row(
               children: [
-                Text(
-                  'Surname:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('Surname:', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(width: 8),
-                Text(''), // Surname will be added here
+                Text(surname),
               ],
             ),
           ],
@@ -102,10 +119,7 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700]),
-          ),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700])),
           SizedBox(height: 4),
           Text(value),
           Divider(),
