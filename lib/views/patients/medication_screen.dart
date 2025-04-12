@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/home_screen.dart';
+import 'package:project/views/patients/patient_home_screen.dart';
 import 'package:project/models/user.dart'; // Import your User model
 
 class medication_screen extends StatelessWidget {

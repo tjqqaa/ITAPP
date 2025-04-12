@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/home_screen.dart'; // Importar la pantalla HomeScreen
+import 'package:project/views/patients/patient_home_screen.dart'; // Importar la pantalla HomeScreen
 
 void main() {
   runApp(MyApp());

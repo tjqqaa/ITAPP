@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/others/theme.dart'; // Import the theme
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
-import 'package:project/views/appointments_screen.dart';
-import 'package:project/views/medication_screen.dart'; // Import the medication_screen
+import 'package:project/views/patients/appointments_screen.dart';
+import 'package:project/views/patients/medication_screen.dart'; // Import the medication_screen
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 

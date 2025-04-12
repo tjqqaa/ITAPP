@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/main.dart';
 import 'package:project/views/authenthication/login_screen.dart';
-import 'package:project/views/home_screen.dart';
+import 'package:project/views/patients/patient_home_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override

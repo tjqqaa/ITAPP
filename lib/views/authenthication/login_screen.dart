@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/home_screen.dart';             // Paciente
-import 'package:project/views/doctor_home_screen.dart';     // Doctor
+import 'package:project/views/patients/patient_home_screen.dart';             // Paciente
+import 'package:project/views/doctors/doctor_home_screen.dart';     // Doctor
 import 'package:project/views/authenthication/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
