@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project/views/patients/patient_home_screen.dart';
 import 'package:project/models/user.dart'; // Import your User model
+import 'package:project/models/patient.dart';
 
 class medication_screen extends StatelessWidget {
-  const medication_screen({Key? key, this.user}) : super(key: key);
+  const medication_screen({Key? key, required this.patient}) : super(key: key);
 
-  final User? user; // Receive the user object (can be null for now)
+  final Patient patient; // Receive the user object (can be null for now)
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class medication_screen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: _buildMedicineList(context, user?.medications ?? const []),
+              child: _buildMedicineList(context, patient.medications),
             ),
           ],
         ),

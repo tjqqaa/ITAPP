@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:project/others/theme.dart'; // Import the theme
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 import 'package:project/views/patients/appointments_screen.dart';
-import 'package:project/views/patients/medication_screen.dart'; // Import the medication_screen
+import 'package:project/views/patients/medication_screen.dart';
+import 'package:project/models/patient.dart';
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final Patient patient; // Se asegura de que el paciente es de tipo Patient
+  const HomeScreen({Key? key, required this.patient}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => ProfileScreen(patient: widget.patient)),
         );
       }
     });
@@ -41,16 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey('hospital_button'),
                   icon: Icons.local_hospital,
                   label: 'Hospital',
-                  onTap: () {},
+                  onTap: () {
+                    // Puedes agregar la acción para Hospital aquí
+                  },
                 ),
                 _buildCustomButton(
                   key: const ValueKey('medicines_button'),
                   icon: Icons.medical_services,
                   label: 'Medicines',
                   onTap: () {
+                    // Navegar a la pantalla de medicamentos pasando el paciente
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const medication_screen()),
+                      MaterialPageRoute(
+                        builder: (context) => medication_screen(patient: widget.patient),
+                      ),
                     );
                   },
                 ),
@@ -64,13 +72,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey('doctors_button'),
                   icon: Icons.people,
                   label: 'Doctors',
-                  onTap: () {},
+                  onTap: () {
+                    // Puedes agregar la acción para Doctores aquí
+                  },
                 ),
                 _buildCustomButton(
                   key: const ValueKey('appointments_button'),
                   icon: Icons.event,
                   label: 'Appointments',
                   onTap: () {
+                    // Navegar a la pantalla de citas
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
