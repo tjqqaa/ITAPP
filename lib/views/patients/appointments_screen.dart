@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/others/theme.dart'; // Import the theme
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 
 class AppointmentsScreen extends StatefulWidget {
@@ -9,36 +8,37 @@ class AppointmentsScreen extends StatefulWidget {
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
 }
 
-// Enum para representar las pestañas disponibles en la app
+// Enum to represent the available tabs in the app
 enum HomeTab { home, medicines, profile }
 
-class _AppointmentsScreenState extends State<AppointmentsScreen>{
-  // El estado guardará la pestaña seleccionada directamente usando el enum
+class _AppointmentsScreenState extends State<AppointmentsScreen> {
+  // Store the selected tab directly using the enum
   HomeTab _selectedTab = HomeTab.home;
 
-  ///Method that lets us perform actions, like changing to another screen, when an item is tapped 
-  ///by the user
+  /// Method to handle actions when an item is tapped
   void _onItemTapped(int index) {
     setState(() {
       _selectedTab = HomeTab.values[index];
     });
-      // Usamos un `switch` para navegar según la pestaña seleccionada
+
+    // Use a `switch` to navigate based on the selected tab
     switch (_selectedTab) {
       case HomeTab.home:
-        // We are already in home tab
+      // Already in the home tab
         break;
       case HomeTab.medicines:
-        // Acción para Medicines
+      // Action for Medicines (you can add navigation or logic for Medicines here)
         break;
       case HomeTab.profile:
+      // Navigate to the Profile screen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => ProfileScreen(user: 'user')), // You need to pass the user object
         );
         break;
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,13 +55,17 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
                   key: const ValueKey('make_appointment_button'),
                   icon: Icons.event_available,
                   label: 'Make an appointment',
-                  onTap: () {},
+                  onTap: () {
+                    // Action for making an appointment
+                  },
                 ),
                 _buildCustomButton(
                   key: const ValueKey('see_appointments_button'),
                   icon: Icons.calendar_month,
-                  label: 'Show appointents',
-                  onTap: () {},
+                  label: 'Show appointments',
+                  onTap: () {
+                    // Action to show appointments
+                  },
                 ),
               ],
             ),
@@ -72,7 +76,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
         backgroundColor: Theme.of(context).primaryColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
-        // Usamos el índice del enum para seleccionar la pestaña activa
+        // Use the index from the enum to select the active tab
         currentIndex: HomeTab.values.indexOf(_selectedTab),
         onTap: _onItemTapped,
         items: const [
@@ -83,6 +87,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
       ),
     );
   }
+
   Widget _buildCustomButton({
     Key? key,
     required IconData icon,

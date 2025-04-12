@@ -4,6 +4,7 @@ class User {
   final String surname;
   final String email;
   final String? phoneNumber;
+  final DateTime dateOfBirth;
 
   User({
     required this.id,
@@ -11,6 +12,7 @@ class User {
     required this.surname,
     required this.email,
     this.phoneNumber,
+    required this.dateOfBirth,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class User {
       'surname': surname,
       'email': email,
       'phoneNumber': phoneNumber,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
     };
   }
 
@@ -28,5 +31,6 @@ class User {
         name = map['name'],
         surname = map['surname'],
         email = map['email'],
-        phoneNumber = map['phoneNumber'];
+        phoneNumber = map['phoneNumber'],
+        dateOfBirth = DateTime.parse(map['dateOfBirth']);
 }

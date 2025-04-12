@@ -11,6 +11,7 @@ class Doctor extends User {
     required String surname,
     required String email,
     String? phoneNumber,
+    required DateTime dateOfBirth,
     required this.specialization,
     this.patients = const [],
     this.appointments = const [],
@@ -20,6 +21,7 @@ class Doctor extends User {
     surname: surname,
     email: email,
     phoneNumber: phoneNumber,
+    dateOfBirth: dateOfBirth,
   );
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
@@ -29,6 +31,7 @@ class Doctor extends User {
       surname: map['surname'],
       email: map['email'],
       phoneNumber: map['phoneNumber'],
+      dateOfBirth: DateTime.parse(map['dateOfBirth']),
       specialization: map['specialization'],
       patients: List<String>.from(map['patients'] ?? []),
       appointments: List<String>.from(map['appointments'] ?? []),

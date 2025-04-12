@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/patients/patient_home_screen.dart';             // Paciente
-import 'package:project/views/doctors/doctor_home_screen.dart';     // Doctor
+import 'package:project/views/patients/patient_home_screen.dart'; // Paciente
+import 'package:project/views/doctors/doctor_home_screen.dart';   // Doctor
 import 'package:project/views/authenthication/signup_screen.dart';
 import 'package:project/models/patient.dart';
+import 'package:project/models/doctor.dart'; // Importar modelo de Doctor
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -19,14 +21,35 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text;
 
     if (email == "doctor@email.com" && password == "123456") {
+      // Crear un doctor de prueba
+      final doctor = Doctor(
+        id: "1",
+        name: "Dr. Juan",
+        surname: "Gómez",
+        email: "doctor@email.com",
+        specialization: "Cardiologist", // Usar 'specialization' en lugar de 'specialty'
+        dateOfBirth: DateTime(1980, 5, 15), // Añadir la fecha de nacimiento
+      );
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DoctorHomeScreen()),
+        MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: doctor)), // Pasamos el doctor aquí
       );
     } else if (email == "paciente@email.com" && password == "123456") {
+      // Crear un paciente de prueba
+      final patient = Patient(
+        id: "1",
+        name: "Juan",
+        surname: "Pérez",
+        email: "paciente@email.com",
+        dateOfBirth: DateTime(1990, 1, 1), // Añadir la fecha de nacimiento
+      );
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const PatientHomeScreen(patient: patient)),
+        MaterialPageRoute(
+          builder: (context) => PatientHomeScreen(patient: patient), // Pasamos el paciente aquí
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -38,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignUpScreen()),
+      MaterialPageRoute(builder: (context) => const SignUpScreen()),
     );
   }
 

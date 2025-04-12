@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
+import 'package:project/models/doctor.dart';
+import 'package:project/views/profile_screen.dart'; // Importar la pantalla del perfil
 
 class DoctorHomeScreen extends StatefulWidget {
-  const DoctorHomeScreen({Key? key}) : super(key: key);
+  final Doctor doctor;
+
+  const DoctorHomeScreen({Key? key, required this.doctor}) : super(key: key);
 
   @override
   State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
@@ -15,9 +18,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     setState(() {
       _selectedIndex = index;
       if (index == 1) {
+        // Navegar a ProfileScreen, pasando el doctor como parámetro bajo el nombre 'user'
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen(patient: patient)),
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(user: widget.doctor), // Cambiado 'doctor' por 'user'
+          ),
         );
       }
     });
@@ -36,14 +42,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildCustomButton(
-                  icon: Icons.person_search,
-                  label: 'Mis pacientes',
-                  onTap: () {},
+                    icon: Icons.person_search,
+                    label: 'Mis pacientes',
+                    onTap: () {} // Acción para los pacientes
                 ),
                 _buildCustomButton(
-                  icon: Icons.calendar_today,
-                  label: 'Citas',
-                  onTap: () {},
+                    icon: Icons.calendar_today,
+                    label: 'Citas',
+                    onTap: () {} // Acción para las citas
                 ),
               ],
             ),
@@ -52,14 +58,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildCustomButton(
-                  icon: Icons.description,
-                  label: 'Prescripciones',
-                  onTap: () {},
+                    icon: Icons.description,
+                    label: 'Prescripciones',
+                    onTap: () {} // Acción para prescripciones
                 ),
                 _buildCustomButton(
-                  icon: Icons.settings,
-                  label: 'Ajustes',
-                  onTap: () {},
+                    icon: Icons.settings,
+                    label: 'Ajustes',
+                    onTap: () {} // Acción para ajustes
                 ),
               ],
             ),

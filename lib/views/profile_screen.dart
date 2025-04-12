@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/patients/patient_home_screen.dart';
+import 'package:project/models/doctor.dart';
 import 'package:project/models/patient.dart';
+import 'package:project/views/patients/patient_home_screen.dart';
+import 'package:project/views/doctors/doctor_home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final Patient patient; // Recibe el paciente de tipo Patient
+  final dynamic user; // Puede ser tanto Patient como Doctor
 
-  const ProfileScreen({Key? key, required this.patient}) : super(key: key);
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -16,10 +18,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _onItemTapped(int index) {
     if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: widget.patient)),
-      );
+      if (widget.user is Patient) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: widget.user)),
+        );
+      } else if (widget.user is Doctor) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: widget.user)),
+        );
+      }
     }
     // No hacemos nada si el índice es 1 (Perfil), porque ya estamos ahí
   }
@@ -38,20 +47,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             _buildProfileHeader(context),
             const SizedBox(height: 20),
-            _buildProfileDetail(context, 'Phone Number', widget.patient.phoneNumber ?? 'Not provided'),
-            _buildProfileDetail(context, 'Date of Birth', widget.patient.dateOfBirth.toString()), // Puedes darle formato si lo prefieres
+            _buildProfileDetail(context, 'Phone Number', widget.user.phoneNumber ?? 'Not provided'),
+            _buildProfileDetail(context, 'Date of Birth', widget.user.dateOfBirth.toString()), // Puedes darle formato si lo prefieres
             const SizedBox(height: 20),
             _buildSectionTitle(context, 'Medications'),
-            widget.patient.medications.isEmpty
+            widget.user is Patient
+                ? widget.user.medications.isEmpty
                 ? Text('No medications registered.')
-                : Text(widget.patient.medications.join(', ')), // Mostrar medicamentos
+                : Text(widget.user.medications.join(', ')) // Mostrar medicamentos
+                : const SizedBox.shrink(), // No mostrar medicamentos para Doctor
             const SizedBox(height: 20),
             _buildSectionTitle(context, 'Appointments'),
-            Text('No appointments scheduled.'), // Puedes agregar lógica para mostrar citas
+            widget.user is Patient
+                ? Text('No appointments scheduled.') // Aquí puedes agregar lógica para citas del paciente
+                : const Text('No appointments scheduled for the doctor.'), // Aquí puedes agregar lógica para citas del doctor
             const SizedBox(height: 20),
-            _buildProfileDetail(context, 'Mood', widget.patient.mood ?? 'Not specified'),
-            _buildProfileDetail(context, 'Emergency Contact', widget.patient.emergencyContact ?? 'Not provided'),
-            _buildProfileDetail(context, 'Health Points', widget.patient.healthPoints.toString()),
+            _buildProfileDetail(context, 'Mood', widget.user is Patient ? widget.user.mood ?? 'Not specified' : 'Not applicable'),
+            _buildProfileDetail(context, 'Emergency Contact', widget.user is Patient ? widget.user.emergencyContact ?? 'Not provided' : 'Not applicable'),
+            _buildProfileDetail(context, 'Health Points', widget.user is Patient ? widget.user.healthPoints.toString() : 'N/A'),
             const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
@@ -102,14 +115,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 const Text('Name:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 8),
-                Text(widget.patient.name),
+                Text(widget.user.name),
               ],
             ),
             Row(
               children: [
                 const Text('Surname:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 8),
-                Text(widget.patient.surname),
+                Text(widget.user.surname),
               ],
             ),
           ],

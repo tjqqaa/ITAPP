@@ -1,7 +1,6 @@
 import 'user.dart';
 
 class Patient extends User {
-  final DateTime dateOfBirth;
   final List<String> medications;
   final List<String> appointments;
   final String mood;
@@ -15,10 +14,10 @@ class Patient extends User {
     required String surname,
     required String email,
     String? phoneNumber,
-    required this.dateOfBirth,
+    required DateTime dateOfBirth,
     this.medications = const [],
     this.appointments = const [],
-    this.mood = 'Neutral',
+    this.mood = "Neutral",
     this.isEmergencyContactNotified = false,
     this.emergencyContact,
     this.healthPoints = 0,
@@ -28,6 +27,7 @@ class Patient extends User {
     surname: surname,
     email: email,
     phoneNumber: phoneNumber,
+    dateOfBirth: dateOfBirth,
   );
 
   factory Patient.fromMap(Map<String, dynamic> map) {
@@ -40,7 +40,7 @@ class Patient extends User {
       dateOfBirth: DateTime.parse(map['dateOfBirth']),
       medications: List<String>.from(map['medications'] ?? []),
       appointments: List<String>.from(map['appointments'] ?? []),
-      mood: map['mood'] ?? 'Neutral',
+      mood: map['mood'] ?? "Neutral",
       isEmergencyContactNotified: map['isEmergencyContactNotified'] ?? false,
       emergencyContact: map['emergencyContact'],
       healthPoints: map['healthPoints'] ?? 0,
@@ -51,7 +51,6 @@ class Patient extends User {
   Map<String, dynamic> toMap() {
     final map = super.toMap();
     map.addAll({
-      'dateOfBirth': dateOfBirth.toIso8601String(),
       'medications': medications,
       'appointments': appointments,
       'mood': mood,
