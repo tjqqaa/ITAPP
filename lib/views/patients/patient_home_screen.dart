@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/patient.dart';
-import 'package:project/views/profile_screen.dart';  // Import the ProfileScreen
+import 'package:project/views/profile_screen.dart'; // Importar la pantalla de perfil
 
 class PatientHomeScreen extends StatefulWidget {
-  final Patient patient;  // Ensure this is a Patient
+  final Patient patient;
 
   const PatientHomeScreen({Key? key, required this.patient}) : super(key: key);
 
   @override
-  State<PatientHomeScreen> createState() => _HomeScreenState();
+  State<PatientHomeScreen> createState() => _PatientHomeScreenState();
 }
 
-class _HomeScreenState extends State<PatientHomeScreen> {
+class _PatientHomeScreenState extends State<PatientHomeScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 1) {
-        // Pass the patient object to ProfileScreen
+        // Navegar a ProfileScreen, pasando el patient como parámetro bajo el nombre 'user'
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileScreen(user: widget.patient),
+            builder: (context) => ProfileScreen(user: widget.patient), // Cambiado 'patient' por 'user'
           ),
         );
       }
@@ -32,21 +32,103 @@ class _HomeScreenState extends State<PatientHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Your existing widgets here
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildCustomButton(
+                  icon: Icons.calendar_today,
+                  label: 'Mis Citas',
+                  onTap: () {
+                    // Acción para ver citas
+                  },
+                ),
+                _buildCustomButton(
+                  icon: Icons.history,
+                  label: 'Historial Médico',
+                  onTap: () {
+                    // Acción para ver historial médico
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildCustomButton(
+                  icon: Icons.medical_services,
+                  label: 'Prescripciones',
+                  onTap: () {
+                    // Acción para ver prescripciones
+                  },
+                ),
+                _buildCustomButton(
+                  icon: Icons.phone,
+                  label: 'Contactar a mi Doctor',
+                  onTap: () {
+                    // Acción para contactar al doctor
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildCustomButton(
+              icon: Icons.settings,
+              label: 'Ajustes',
+              onTap: () {
+                // Acción para ajustes de cuenta
+              },
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCustomButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: onTap,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColor,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 30),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 50),
+              const SizedBox(height: 8),
+              Text(label, style: const TextStyle(fontSize: 18)),
+            ],
+          ),
+        ),
       ),
     );
   }
