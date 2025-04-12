@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/patient.dart';
-import 'package:project/views/profile_screen.dart'; // Importar la pantalla de perfil
+import 'package:project/views/profile_screen.dart';
+import 'package:project/views/patients/MedicalHistoryScreen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -52,7 +53,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   icon: Icons.history,
                   label: 'Historial Médico',
                   onTap: () {
-                    // Acción para ver historial médico
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MedicalHistoryScreen(),
+                      ),
+                    );
                   },
                 ),
               ],
