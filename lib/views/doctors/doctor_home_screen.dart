@@ -17,7 +17,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => const ProfileScreen(patient: patient)),
         );
       }
     });

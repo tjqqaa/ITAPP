@@ -5,15 +5,15 @@ import 'package:project/views/patients/appointments_screen.dart';
 import 'package:project/views/patients/medication_screen.dart';
 import 'package:project/models/patient.dart';
 
-class HomeScreen extends StatefulWidget {
+class PatientHomeScreen extends StatefulWidget {
   final Patient patient; // Se asegura de que el paciente es de tipo Patient
-  const HomeScreen({Key? key, required this.patient}) : super(key: key);
+  const PatientHomeScreen({Key? key, required this.patient}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PatientHomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<PatientHomeScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {

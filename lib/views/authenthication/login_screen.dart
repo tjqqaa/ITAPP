@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/views/patients/patient_home_screen.dart';             // Paciente
 import 'package:project/views/doctors/doctor_home_screen.dart';     // Doctor
 import 'package:project/views/authenthication/signup_screen.dart';
-
+import 'package:project/models/patient.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (email == "paciente@email.com" && password == "123456") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const PatientHomeScreen(patient: patient)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
