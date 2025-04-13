@@ -4,7 +4,6 @@ import 'package:project/views/profile_screen.dart';
 import 'package:project/views/patients/medical_history.dart';
 import 'package:project/views/patients/appointments_screen_patient.dart';
 
-
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
 
@@ -20,16 +19,16 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
-        // Navegar a ProfileScreen, pasando el patient como parámetro bajo el nombre 'user'
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(user: widget.patient), // Cambiado 'patient' por 'user'
-          ),
-        );
-      }
     });
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(user: widget.patient),
+        ),
+      );
+    }
   }
 
   @override
@@ -50,8 +49,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      builder: (context) => AppointmentsScreenPatient(patient: widget.patient),
-                    ),
+                      MaterialPageRoute(
+                        builder: (context) => AppointmentsScreenPatient(patient: widget.patient),
+                      ),
+                    );
                   },
                 ),
                 _buildCustomButton(
@@ -61,7 +62,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MedicalHistoryScreen(),
+                        builder: (context) =>  MedicalHistoryScreen(),
                       ),
                     );
                   },

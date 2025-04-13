@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/patients/patient_home_screen.dart'; // Importar la pantalla PatientHomeScreen
-import 'package:project/views/patients/medication_screen.dart'; // Importar pantalla de Medicamentos
-import 'package:project/views/patients/appointments_screen_patient.dart'; // Importar pantalla de Citas
-import 'package:project/views/profile_screen.dart'; // Importar pantalla de Perfil
-import 'package:project/models/patient.dart'; // Importar el modelo de Patient
+import 'package:project/views/patients/patient_home_screen.dart';
+import 'package:project/views/patients/appointments_screen_patient.dart';
+import 'package:project/views/profile_screen.dart';
+import 'package:project/models/patient.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,7 +28,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Creating a sample Patient object for testing purposes
+  // A sample patient object for test/demo purposes
   final Patient patient = Patient(
     id: '1',
     name: 'Juan',
@@ -43,33 +42,18 @@ class _MainScreenState extends State<MainScreen> {
     healthPoints: 100,
   );
 
-  final List<Widget> _screens = [
-    PatientHomeScreen(patient: Patient( // Pass the actual Patient object here
-      id: '1',
-      name: 'Juan',
-      surname: 'Pérez',
-      email: 'juan.perez@example.com',
-      dateOfBirth: DateTime(1990, 1, 1),
-      phoneNumber: '1234567890',
-      medications: [],
-      mood: 'Good',
-      emergencyContact: 'Jane Pérez',
-      healthPoints: 100,
-    )),
-    AppointmentsScreenPatient(patient: widget.patient), // Asegúrate de que esta pantalla esté implementada
-    ProfileScreen(user: Patient( // Pass the actual Patient object here
-      id: '1',
-      name: 'Juan',
-      surname: 'Pérez',
-      email: 'juan.perez@example.com',
-      dateOfBirth: DateTime(1990, 1, 1),
-      phoneNumber: '1234567890',
-      medications: [],
-      mood: 'Good',
-      emergencyContact: 'Jane Pérez',
-      healthPoints: 100,
-    )),
-  ];
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      PatientHomeScreen(patient: patient),
+      AppointmentsScreenPatient(patient: patient),
+      // You can add MedicationScreen here later if implemented
+      ProfileScreen(user: patient),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -88,10 +72,6 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.medical_services),
-            label: 'Medicamentos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
