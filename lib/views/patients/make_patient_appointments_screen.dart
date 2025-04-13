@@ -3,13 +3,13 @@ import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 import 'package:project/models/patient.dart';
 
 
-class AppointmentsScreenPatient extends StatefulWidget {
+class MakePatientAppointmentsScreen extends StatefulWidget {
   final Patient patient;
-
-  const AppointmentsScreenPatient({super.key, required this.patient});
+  
+  const MakePatientAppointmentsScreen({super.key, required this.patient});
 
   @override
-  State<AppointmentsScreenPatient> createState() => _AppointmentsScreenState();
+  State<MakePatientAppointmentsScreen> createState() => _MakeAppointmentsPatientScreen();
 }
 
 // Enum to represent the navigation bar options
@@ -18,7 +18,7 @@ enum NavigationTab { home, medicines, profile }
 //Enum to represent the accessible screens for making and seeing appointments
 enum AppointmentScreens {makeAppointment, showAppointments}
 
-class _AppointmentsScreenState extends State<AppointmentsScreenPatient>{
+class _MakeAppointmentsPatientScreen extends State<MakePatientAppointmentsScreen>{
   // El estado guardará la pestaña seleccionada directamente usando el enum
   NavigationTab _selectedTab = NavigationTab.home;
 
@@ -54,7 +54,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreenPatient>{
       // Usamos un `switch` para navegar según la pestaña seleccionada
     switch (selectedScreen) {
       case AppointmentScreens.makeAppointment:
-        //Nos cambiamos a la pantalla de make appointments
+        //
         break;
       case AppointmentScreens.showAppointments:
         //Nos cambiamos a la pantalla de show appointments

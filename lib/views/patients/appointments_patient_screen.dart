@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
+import 'package:project/models/patient.dart';
+import 'package:project/views/patients/make_patient_appointments_screen.dart';
 
-class AppointmentsScreen extends StatefulWidget {
-  const AppointmentsScreen({super.key});
+
+class AppointmentsPatientScreen extends StatefulWidget {
+  final Patient patient;
+
+  const AppointmentsPatientScreen({super.key, required this.patient});
 
   @override
-  State<AppointmentsScreen> createState() => _AppointmentsScreenState();
+  State<AppointmentsPatientScreen> createState() => _AppointmentsPatientScreenState();
 }
 
 // Enum to represent the navigation bar options
@@ -14,7 +19,7 @@ enum NavigationTab { home, medicines, profile }
 //Enum to represent the accessible screens for making and seeing appointments
 enum AppointmentScreens {makeAppointment, showAppointments}
 
-class _AppointmentsScreenState extends State<AppointmentsScreen>{
+class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
   // El estado guardará la pestaña seleccionada directamente usando el enum
   NavigationTab _selectedTab = NavigationTab.home;
 
@@ -51,6 +56,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
     switch (selectedScreen) {
       case AppointmentScreens.makeAppointment:
         //Nos cambiamos a la pantalla de make appointments
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MakePatientAppointmentsScreen(patient: widget.patient)), // You need to pass the user object
+        );
         break;
       case AppointmentScreens.showAppointments:
         //Nos cambiamos a la pantalla de show appointments

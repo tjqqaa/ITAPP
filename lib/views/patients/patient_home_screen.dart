@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/models/patient.dart';
 import 'package:project/views/profile_screen.dart';
 import 'package:project/views/patients/medical_history.dart';
-import 'package:project/views/patients/appointments_screen_patient.dart';
+import 'package:project/views/patients/appointments_patient_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -50,7 +50,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AppointmentsScreenPatient(patient: widget.patient),
+                        builder: (context) => AppointmentsPatientScreen(patient: widget.patient),
                       ),
                     );
                   },

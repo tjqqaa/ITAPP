@@ -8,6 +8,8 @@ class Patient extends User {
   final String? emergencyContact;
   final int healthPoints;
 
+  /*raul: ¿Aquí habría que meter una referencia al doctor no?*/
+
   Patient({
     required String id,
     required String name,

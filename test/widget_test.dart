@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/views/patients/patient_home_screen.dart';
-import 'package:project/views/patients/appointments_screen_patient.dart';
+import 'package:project/views/patients/appointments_patient_screen.dart';
 import 'package:project/views/profile_screen.dart';
 import 'package:project/models/patient.dart';
 
@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _screens = [
       PatientHomeScreen(patient: patient),
-      AppointmentsScreenPatient(patient: patient),
+      AppointmentsPatientScreen(patient: patient),
       // You can add MedicationScreen here later if implemented
       ProfileScreen(user: patient),
     ];
