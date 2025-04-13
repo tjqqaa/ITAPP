@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/patient.dart';
 import 'package:project/views/profile_screen.dart';
-import 'package:project/views/patients/MedicalHistoryScreen.dart';
+import 'package:project/views/patients/medical_history.dart';
+import 'package:project/views/patients/appointments_screen_patient.dart';
+
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -46,7 +48,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   icon: Icons.calendar_today,
                   label: 'Mis Citas',
                   onTap: () {
-                    // Acción para ver citas
+                    Navigator.push(
+                      context,
+                      builder: (context) => AppointmentsScreenPatient(patient: widget.patient),
+                    ),
                   },
                 ),
                 _buildCustomButton(

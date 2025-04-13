@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/views/patients/patient_home_screen.dart'; // Importar la pantalla PatientHomeScreen
 import 'package:project/views/patients/medication_screen.dart'; // Importar pantalla de Medicamentos
-import 'package:project/views/patients/appointments_screen.dart'; // Importar pantalla de Citas
+import 'package:project/views/patients/appointments_screen_patient.dart'; // Importar pantalla de Citas
 import 'package:project/views/profile_screen.dart'; // Importar pantalla de Perfil
 import 'package:project/models/patient.dart'; // Importar el modelo de Patient
 
@@ -56,7 +56,7 @@ class _MainScreenState extends State<MainScreen> {
       emergencyContact: 'Jane Pérez',
       healthPoints: 100,
     )),
-    AppointmentsScreen(), // Asegúrate de que esta pantalla esté implementada
+    AppointmentsScreenPatient(patient: widget.patient), // Asegúrate de que esta pantalla esté implementada
     ProfileScreen(user: Patient( // Pass the actual Patient object here
       id: '1',
       name: 'Juan',
