@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:project/others/theme.dart'; // Import the theme
-import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
+import 'package:project/models/patient.dart';
+import 'package:project/views/profile_screen.dart';
+import 'package:project/views/patients/MedicalHistoryScreen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class PatientHomeScreen extends StatefulWidget {
+  final Patient patient;
+
+  const PatientHomeScreen({Key? key, required this.patient}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PatientHomeScreen> createState() => _PatientHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _PatientHomeScreenState extends State<PatientHomeScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 2) {
+      if (index == 1) {
+        // Navegar a ProfileScreen, pasando el patient como parámetro bajo el nombre 'user'
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(user: widget.patient), // Cambiado 'patient' por 'user'
+          ),
         );
       }
     });
@@ -37,16 +43,23 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildCustomButton(
-                  key: const ValueKey('hospital_button'),
-                  icon: Icons.local_hospital,
-                  label: 'Hospital',
-                  onTap: () {},
+                  icon: Icons.calendar_today,
+                  label: 'Mis Citas',
+                  onTap: () {
+                    // Acción para ver citas
+                  },
                 ),
                 _buildCustomButton(
-                  key: const ValueKey('medicines_button'),
-                  icon: Icons.medical_services,
-                  label: 'Medicines',
-                  onTap: () {},
+                  icon: Icons.history,
+                  label: 'Historial Médico',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MedicalHistoryScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -55,18 +68,28 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildCustomButton(
-                  key: const ValueKey('doctors_button'),
-                  icon: Icons.people,
-                  label: 'Doctors',
-                  onTap: () {},
+                  icon: Icons.medical_services,
+                  label: 'Prescripciones',
+                  onTap: () {
+                    // Acción para ver prescripciones
+                  },
                 ),
                 _buildCustomButton(
-                  key: const ValueKey('appointments_button'),
-                  icon: Icons.event,
-                  label: 'Appointments',
-                  onTap: () {},
+                  icon: Icons.phone,
+                  label: 'Contactar a mi Doctor',
+                  onTap: () {
+                    // Acción para contactar al doctor
+                  },
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            _buildCustomButton(
+              icon: Icons.settings,
+              label: 'Ajustes',
+              onTap: () {
+                // Acción para ajustes de cuenta
+              },
             ),
           ],
         ),
@@ -78,16 +101,14 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: 'Medicines'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );
   }
 
   Widget _buildCustomButton({
-    Key? key,
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -96,7 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
-          key: key,
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,

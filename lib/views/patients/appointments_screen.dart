@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/others/theme.dart'; // Import the theme
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 
 class AppointmentsScreen extends StatefulWidget {
@@ -22,10 +21,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
   ///Method that lets us perform actions, like changing to another screen, when an item is tapped 
   ///by the user
   void _onNavigationItemTapped(int index) {
+
     setState(() {
       _selectedTab = NavigationTab.values[index];
     });
-      // Usamos un `switch` para navegar según la pestaña seleccionada
+
+    // Use a `switch` to navigate based on the selected tab
     switch (_selectedTab) {
       case NavigationTab.home:
         // We are already in home tab
@@ -34,9 +35,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
         // Acción para Medicines
         break;
       case NavigationTab.profile:
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => ProfileScreen(user: 'user')), // You need to pass the user object
         );
         break;
     }
@@ -55,6 +57,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
         break;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +103,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>{
       ),
     );
   }
+
   Widget _buildCustomButton({
     Key? key,
     required IconData icon,

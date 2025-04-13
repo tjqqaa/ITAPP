@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/home_screen.dart'; // Importar la pantalla HomeScreen
+import 'package:project/views/patients/patient_home_screen.dart'; // Importar la pantalla PatientHomeScreen
+import 'package:project/views/patients/medication_screen.dart'; // Importar pantalla de Medicamentos
+import 'package:project/views/patients/appointments_screen.dart'; // Importar pantalla de Citas
+import 'package:project/views/profile_screen.dart'; // Importar pantalla de Perfil
+import 'package:project/models/patient.dart'; // Importar el modelo de Patient
 
 void main() {
   runApp(MyApp());
@@ -25,12 +29,46 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
+  // Creating a sample Patient object for testing purposes
+  final Patient patient = Patient(
+    id: '1',
+    name: 'Juan',
+    surname: 'Pérez',
+    email: 'juan.perez@example.com',
+    dateOfBirth: DateTime(1990, 1, 1),
+    phoneNumber: '1234567890',
+    medications: [],
+    mood: 'Good',
+    emergencyContact: 'Jane Pérez',
+    healthPoints: 100,
+  );
+
   final List<Widget> _screens = [
-    HomeScreen(), // Pantalla de inicio que ya tienes configurada
-    // Puedes agregar más pantallas aquí cuando las tengas, como:
-    // MedicationsScreen(),
-    // AppointmentsScreen(),
-    // ProfileScreen(),
+    PatientHomeScreen(patient: Patient( // Pass the actual Patient object here
+      id: '1',
+      name: 'Juan',
+      surname: 'Pérez',
+      email: 'juan.perez@example.com',
+      dateOfBirth: DateTime(1990, 1, 1),
+      phoneNumber: '1234567890',
+      medications: [],
+      mood: 'Good',
+      emergencyContact: 'Jane Pérez',
+      healthPoints: 100,
+    )),
+    AppointmentsScreen(), // Asegúrate de que esta pantalla esté implementada
+    ProfileScreen(user: Patient( // Pass the actual Patient object here
+      id: '1',
+      name: 'Juan',
+      surname: 'Pérez',
+      email: 'juan.perez@example.com',
+      dateOfBirth: DateTime(1990, 1, 1),
+      phoneNumber: '1234567890',
+      medications: [],
+      mood: 'Good',
+      emergencyContact: 'Jane Pérez',
+      healthPoints: 100,
+    )),
   ];
 
   void _onItemTapped(int index) {
@@ -46,24 +84,23 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
           ),
-          // Descomenta los siguientes elementos cuando agregues más pantallas
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.medical_services),
-          //   label: 'Medicamentos',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.calendar_today),
-          //   label: 'Citas',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.person),
-          //   label: 'Perfil',
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.medical_services),
+            label: 'Medicamentos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Citas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
         ],
       ),
     );
