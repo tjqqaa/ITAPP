@@ -3,7 +3,6 @@ import 'user.dart';
 class Doctor extends User {
   final String specialization;
   final List<String> patients;
-  final List<String> appointments;
 
   Doctor({
     required String id,
@@ -12,9 +11,9 @@ class Doctor extends User {
     required String email,
     String? phoneNumber,
     required DateTime dateOfBirth,
-    required this.specialization,
+    List<String> appointments = const [],
     this.patients = const [],
-    this.appointments = const [],
+    required this.specialization,
   }) : super(
     id: id,
     name: name,
@@ -22,6 +21,7 @@ class Doctor extends User {
     email: email,
     phoneNumber: phoneNumber,
     dateOfBirth: dateOfBirth,
+    appointments: appointments, // ya está en User
   );
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
@@ -32,9 +32,9 @@ class Doctor extends User {
       email: map['email'],
       phoneNumber: map['phoneNumber'],
       dateOfBirth: DateTime.parse(map['dateOfBirth']),
-      specialization: map['specialization'],
-      patients: List<String>.from(map['patients'] ?? []),
       appointments: List<String>.from(map['appointments'] ?? []),
+      patients: List<String>.from(map['patients'] ?? []),
+      specialization: map['specialization'],
     );
   }
 
@@ -44,7 +44,6 @@ class Doctor extends User {
     map.addAll({
       'specialization': specialization,
       'patients': patients,
-      'appointments': appointments,
     });
     return map;
   }

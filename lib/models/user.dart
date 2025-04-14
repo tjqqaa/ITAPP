@@ -5,6 +5,7 @@ class User {
   final String email;
   final String? phoneNumber;
   final DateTime dateOfBirth;
+  final List<String> appointments;
 
   User({
     required this.id,
@@ -13,6 +14,7 @@ class User {
     required this.email,
     this.phoneNumber,
     required this.dateOfBirth,
+    this.appointments = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class User {
       'email': email,
       'phoneNumber': phoneNumber,
       'dateOfBirth': dateOfBirth.toIso8601String(),
+      'appointments': appointments,
     };
   }
 
@@ -32,5 +35,6 @@ class User {
         surname = map['surname'],
         email = map['email'],
         phoneNumber = map['phoneNumber'],
-        dateOfBirth = DateTime.parse(map['dateOfBirth']);
+        dateOfBirth = DateTime.parse(map['dateOfBirth']),
+        appointments = List<String>.from(map['appointments'] ?? []);
 }
