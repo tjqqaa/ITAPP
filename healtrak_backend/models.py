@@ -1,23 +1,22 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 class User(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
-    email = models.EmailField()
-    phoneNumber = models.IntegerField()
+    email = models.EmailField(unique=True)
+    phoneNumber = models.CharField(max_length=15)
     dateOfBirth = models.DateField()
 
 class Doctor(User):
     specialization = models.CharField(max_length=100)
-    patients = ArrayField(models.ForeignKey('Patient', on_delete=models.CASCADE))
-
 
 class Patient(User):
-    medications = ArrayField(models.IntegerField(), blank=True, default=list)
     mood = models.CharField(max_length=100)
-    emergencyContact = models.IntegerField()
+    emergencyContact = models.CharField(max_length=15)
     healthPoints = models.IntegerField()
-    doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='patients')
 
+class Medication(models.Model):
+    name = models.CharField(max_length=100)
+    dosage = models.CharField(max_length=100)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medications')
