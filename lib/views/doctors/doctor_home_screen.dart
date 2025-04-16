@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
-import 'package:project/views/profile_screen.dart'; // Importar la pantalla del perfil
+import 'package:project/views/profile_screen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   final Doctor doctor;
@@ -17,59 +17,62 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
-        // Navegar a ProfileScreen, pasando el doctor como parámetro bajo el nombre 'user'
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(user: widget.doctor), // Cambiado 'doctor' por 'user'
-          ),
-        );
-      }
     });
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(user: widget.doctor),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCustomButton(
-                    icon: Icons.person_search,
-                    label: 'Mis pacientes',
-                    onTap: () {} // Acción para los pacientes
-                ),
-                _buildCustomButton(
-                    icon: Icons.calendar_today,
-                    label: 'Citas',
-                    onTap: () {} // Acción para las citas
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCustomButton(
-                    icon: Icons.description,
-                    label: 'Prescripciones',
-                    onTap: () {} // Acción para prescripciones
-                ),
-                _buildCustomButton(
-                    icon: Icons.settings,
-                    label: 'Ajustes',
-                    onTap: () {} // Acción para ajustes
-                ),
-              ],
-            ),
-          ],
+        child: Center(
+          child: GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildCustomButton(
+                icon: Icons.person_search,
+                label: 'Mis Pacientes',
+                onTap: () {
+                  // Acción para ver pacientes
+                },
+              ),
+              _buildCustomButton(
+                icon: Icons.calendar_today,
+                label: 'Citas',
+                onTap: () {
+                  // Acción para citas
+                },
+              ),
+              _buildCustomButton(
+                icon: Icons.description,
+                label: 'Prescripciones',
+                onTap: () {
+                  // Acción para prescripciones
+                },
+              ),
+              _buildCustomButton(
+                icon: Icons.settings,
+                label: 'Ajustes',
+                onTap: () {
+                  // Acción para ajustes
+                },
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -79,7 +82,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
@@ -91,27 +94,25 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     required String label,
     required VoidCallback onTap,
   }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 30),
+    return SizedBox(
+      width: 160,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 50),
-              const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontSize: 18)),
-            ],
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 40),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(fontSize: 16), textAlign: TextAlign.center),
+          ],
         ),
       ),
     );
