@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -9,118 +8,74 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
 class NotificationService {
-  // Cambiamos de const a final para el canal de notificación
+  // Definir el canal de notificación
   static final AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    'medication_channel', // id
-    'Medication Reminders', // title
-    description: 'Channel for medication reminders',
-    importance: Importance.max,
-    playSound: true,
+    'medication_channel', // ID del canal
+    'Medication Reminders', // Título del canal
+    description: 'Canal para recordatorios de medicación',
+    importance: Importance.max, // Notificaciones de alta prioridad
+    playSound: true, // Reproducir sonido cuando llegue la notificación
+    enableLights: true, // Activar luces al recibir notificación
+    enableVibration: true, // Habilitar vibración
   );
 
+  // Inicializar el servicio de notificaciones
   static Future<void> initialize() async {
-    // Inicializar timezone
     tz.initializeTimeZones();
 
-    // Configuración inicial para Android
+    // Configuración de la notificación en Android
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher'); // Ícono de la app
 
-    // Configuración de inicialización
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
 
-    // Inicializar el plugin
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        if (kDebugMode) {
-          debugPrint('Notification tapped: ${response.payload}');
+        if (response.payload != null) {
+          print('Notificación presionada: ${response.payload}');
         }
       },
     );
 
-    // Crear canal de notificación (Android)
+    // Registrar el canal de notificación (solo la primera vez que se ejecuta la app)
     final androidPlugin = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
     await androidPlugin?.createNotificationChannel(_channel);
-
-    if (kDebugMode) {
-      debugPrint('Notification channel created');
-    }
   }
 
+  // Programar el recordatorio de medicación
   static Future<void> scheduleMedicationReminder({
     required int id,
     required String title,
     required String body,
     Duration delay = const Duration(seconds: 10),
-    bool repeatDaily = false,
-    String? payload,
   }) async {
-    final scheduledDateTime = tz.TZDateTime.now(tz.local).add(delay);
+    var scheduledNotificationDateTime = DateTime.now().add(delay);
 
-    try {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDateTime,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            _channel.id,
-            _channel.name,
-            channelDescription: _channel.description,
-            importance: Importance.max,
-            priority: Priority.high,
-            playSound: true,
-            enableVibration: true,
-            vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
-          ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        // Eliminamos uiLocalNotificationDateInterpretation que ya no es necesario
-        matchDateTimeComponents: repeatDaily ? DateTimeComponents.time : null,
-        payload: payload,
-      );
-
-      if (kDebugMode) {
-        debugPrint('Notification scheduled successfully for $scheduledDateTime');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error scheduling notification: $e');
-      }
-      rethrow;
-    }
-  }
-
-  static Future<void> showInstantNotification({
-    required int id,
-    required String title,
-    required String body,
-    String? payload,
-  }) async {
-    await flutterLocalNotificationsPlugin.show(
+    // Asegúrate de que la notificación se programe en la zona horaria local
+    await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      NotificationDetails(
+      tz.TZDateTime.from(scheduledNotificationDateTime, tz.local), // Programar en zona horaria local
+      const NotificationDetails(
         android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-          vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
+          'medication_channel', // ID del canal
+          'Medication Reminders', // Nombre del canal
+          channelDescription: 'Canal para recordatorios de medicación', // Descripción
+          importance: Importance.max, // Alta prioridad
+          priority: Priority.high, // Alta prioridad
+          playSound: true, // Reproducir sonido
+          enableVibration: true, // Habilitar vibración
+          enableLights: true, // Activar luces
         ),
       ),
-      payload: payload,
+      androidScheduleMode: AndroidScheduleMode.exact, // Programar la notificación de forma exacta
+      payload: 'Medicamento ID: $id', // Puedes incluir un payload para identificar la notificación
     );
   }
 }

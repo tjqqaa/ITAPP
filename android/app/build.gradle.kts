@@ -15,6 +15,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // No es necesario incluir configuraciones de Vulkan o RenderScript
     }
 
     compileOptions {

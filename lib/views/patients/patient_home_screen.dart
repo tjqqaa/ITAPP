@@ -40,11 +40,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: GridView.count(
-            crossAxisCount: 2, // Dos botones por fila
-            crossAxisSpacing: 16, // Espacio entre columnas
-            mainAxisSpacing: 16, // Espacio entre filas
-            shrinkWrap: true, // Permite que el GridView sea desplazable
-            physics: NeverScrollableScrollPhysics(), // Evita desplazamiento dentro del GridView
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             children: [
               _buildCustomButton(
                 icon: Icons.calendar_today,
@@ -74,27 +74,23 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               _buildCustomButton(
                 icon: Icons.medical_services,
                 label: 'Prescripciones',
-                onTap: () {
-                  // Acción para ver prescripciones
-                },
+                onTap: () {},
               ),
               _buildCustomButton(
                 icon: Icons.phone,
                 label: 'Contactar a mi Doctor',
-                onTap: () {
-                  // Acción para contactar al doctor
-                },
+                onTap: () {},
               ),
               _buildCustomButton(
                 icon: Icons.alarm,
                 label: 'Recordatorio Pastillas',
                 onTap: () async {
+                  // Programar el recordatorio de pastillas con un retraso de 5 segundos
                   await NotificationService.scheduleMedicationReminder(
                     id: 1,
                     title: 'Hora de tomar tu medicamento',
                     body: 'Recuerda tomar tu medicación.',
-                    delay: Duration(seconds: 5),
-                    repeatDaily: false,
+                    delay: Duration(seconds: 5), // Retraso de 5 segundos para probar
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Recordatorio programado")),
@@ -104,9 +100,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               _buildCustomButton(
                 icon: Icons.settings,
                 label: 'Ajustes',
-                onTap: () {
-                  // Acción para ajustes de cuenta
-                },
+                onTap: () {},
               ),
             ],
           ),
