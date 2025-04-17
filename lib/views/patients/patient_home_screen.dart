@@ -85,16 +85,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 icon: Icons.alarm,
                 label: 'Recordatorio Pastillas',
                 onTap: () async {
-                  // Programar el recordatorio de pastillas con un retraso de 5 segundos
-                  await NotificationService.scheduleMedicationReminder(
+                  await NotificationService.showMedicationReminder(
                     id: 1,
                     title: 'Hora de tomar tu medicamento',
                     body: 'Recuerda tomar tu medicación.',
-                    delay: Duration(seconds: 5), // Retraso de 5 segundos para probar
+                    delay: Duration(seconds: 5), // Delay artificial de prueba
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Recordatorio programado")),
-                  );
+
+                  debugPrint("✅ Notificación lanzada (o en camino)");
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Recordatorio programado")),
+                    );
+                  }
                 },
               ),
               _buildCustomButton(

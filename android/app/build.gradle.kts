@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.example.project"
         minSdk = 21 // ✅ Flutter default and required for notification APIs
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 33
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         // No es necesario incluir configuraciones de Vulkan o RenderScript

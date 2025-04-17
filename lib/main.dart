@@ -35,6 +35,7 @@ Future<void> initNotifications() async {
 }
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize notifications and custom notification service
@@ -58,3 +59,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
