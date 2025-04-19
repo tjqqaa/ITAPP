@@ -7,25 +7,23 @@ class User(models.Model):
     phoneNumber = models.CharField(max_length=15)
     dateOfBirth = models.DateField()
 
-    def __str__(self):
-        return f"{self.name} {self.surname}"
+    class Meta:
+        abstract = True
 
-class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='doctor_profile')
+class Doctor(User):
     specialization = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.user.name} {self.user.surname} ({self.specialization})"
+        return f"{self.name} {self.surname} ({self.specialization})"
 
-class Patient(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')
+class Patient(User):
     mood = models.CharField(max_length=100)
     emergencyContact = models.CharField(max_length=15)
     healthPoints = models.IntegerField()
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='patients')
 
     def __str__(self):
-        return f"{self.user.name} {self.user.surname} (Patient of {self.doctor.user.name})"
+        return f"{self.name} {self.surname} (Patient of {self.doctor.name})"
 
 
 class Medication(models.Model):
@@ -49,11 +47,11 @@ class Appointment(models.Model):
         ('online', 'Online'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_appointments')
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='patient_appointments')
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='doctor_appointments')
     appointment_date = models.DateTimeField()
     reason = models.TextField()
-    ubication = models.CharField(max_length=255, null=True, blank=True)
+    location     = models.CharField(max_length=255, null=True, blank=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     state = models.CharField(max_length=10, choices=STATE_CHOICES, default='pending')
 
