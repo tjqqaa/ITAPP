@@ -1,6 +1,7 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:project/views/patients/stress_tips.dart';
+import 'package:project/views/patients/breathing_exercises.dart';
+
 
 class MentalHealthScreen extends StatelessWidget {
   const MentalHealthScreen({Key? key}) : super(key: key);
@@ -9,7 +10,7 @@ class MentalHealthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Salud Mental'),
+        title: const Text('Mental Health'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
@@ -17,36 +18,48 @@ class MentalHealthScreen extends StatelessWidget {
         child: ListView(
           children: [
             Text(
-              'Bienestar Emocional',
+              'Emotional Well-being',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
             const Text(
-              'Aquí encontrarás recursos y herramientas para ayudarte a cuidar tu salud mental. Recuerda que pedir ayuda es una señal de fortaleza.',
+              'Here you will find resources and tools to help you take care of your mental health. Remember, asking for help is a sign of strength.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 30),
             ElevatedButton.icon(
               onPressed: () {
-                // Podés redirigir a recursos externos o iniciar una consulta
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BreathingExercisesScreen(),
+                  ),
+                );
               },
               icon: const Icon(Icons.self_improvement),
-              label: const Text('Ejercicios de Respiración'),
+              label: const Text('Breathing exercises'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
               ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
-                // Otra funcionalidad, como videos o tips
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const StressTipsScreen(),
+                  ),
+                );
               },
               icon: const Icon(Icons.book),
-              label: const Text('Consejos para el Estrés'),
+              label: const Text('Tips for managing stress'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
               ),
             ),
           ],
