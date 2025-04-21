@@ -56,3 +56,70 @@ class MedicationListCreateView(APIView):
             medication = serializer.save()
             return Response(MedicationSerializer(medication).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DoctorDetailView(APIView):
+    def get(self, request, pk):
+        doctor = Doctor.objects.get(pk=pk)
+        serializer = DoctorSerializer(doctor)
+        return Response(serializer.data)
+    def put(self, request, pk):
+        doctor = Doctor.objects.get(pk=pk)
+        serializer = DoctorSerializer(doctor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk):
+        doctor = Doctor.objects.get(pk=pk)
+        doctor.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+class PatientDetailView(APIView):
+    def get(self, request, pk):
+        patient = Patient.objects.get(pk=pk)
+        serializer = PatientSerializer(patient)
+        return Response(serializer.data)
+    def put(self, request, pk):
+        patient = Patient.objects.get(pk=pk)
+        serializer = PatientSerializer(patient, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk):
+        patient = Patient.objects.get(pk=pk)
+        patient.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class MedicationDetailView(APIView):
+    def get(self, request, pk):
+        medication = Medication.objects.get(pk=pk)
+        serializer = MedicationSerializer(medication)
+        return Response(serializer.data)
+    def put(self, request, pk):
+        medication = Medication.objects.get(pk=pk)
+        serializer = MedicationSerializer(medication, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk):
+        medication = Medication.objects.get(pk=pk)
+        medication.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AppointmentDetailView(APIView):
+    def get(self, request, pk):
+        appointment = Appointment.objects.get(pk=pk)
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data)
+    def put(self, request, pk):
+        appointment = Appointment.objects.get(pk=pk)
+        serializer = AppointmentSerializer(appointment, data=request.data)
+        if serializer.is_valid():
+            appointment.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk):
+        appointment = Appointment.objects.get(pk=pk)
+        appointment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
