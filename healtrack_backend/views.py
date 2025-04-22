@@ -1,13 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from healtrack_backend.models import Doctor, Patient, Appointment, Medication
 from healtrack_backend.serializers import DoctorSerializer, PatientSerializer, AppointmentSerializer, \
     MedicationSerializer
 from rest_framework.generics import ListAPIView
 
 
-class DoctorListCreateView(APIView):
+class DoctorListCreateView(generics.ListCreateAPIView):
+    serializer_class = DoctorSerializer
+
     def get(self, request):
         doctors = Doctor.objects.all()
         serializer = DoctorSerializer(doctors, many=True)
@@ -20,7 +22,10 @@ class DoctorListCreateView(APIView):
             return Response(DoctorSerializer(doctor).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class PatientListCreateView(APIView):
+    serializer_class = PatientSerializer
+
     def get(self, request):
         patients = Patient.objects.all()
         serializer = PatientSerializer(patients, many=True)
@@ -33,11 +38,15 @@ class PatientListCreateView(APIView):
             return Response(PatientSerializer(patient).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class AppointmentListCreateView(APIView):
+    serializer_class = AppointmentSerializer
+
     def get(self, request):
         appointments = Appointment.objects.all()
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
+
     def post(self, request):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
@@ -45,11 +54,15 @@ class AppointmentListCreateView(APIView):
             return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class MedicationListCreateView(APIView):
+    serializer_class = MedicationSerializer
+
     def get(self, request):
         medications = Medication.objects.all()
         serializer = MedicationSerializer(medications, many=True)
         return Response(serializer.data)
+
     def post(self, request):
         serializer = MedicationSerializer(data=request.data)
         if serializer.is_valid():
@@ -57,11 +70,15 @@ class MedicationListCreateView(APIView):
             return Response(MedicationSerializer(medication).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DoctorDetailView(APIView):
+    serializer_class = DoctorSerializer
+
     def get(self, request, pk):
         doctor = Doctor.objects.get(pk=pk)
         serializer = DoctorSerializer(doctor)
         return Response(serializer.data)
+
     def put(self, request, pk):
         doctor = Doctor.objects.get(pk=pk)
         serializer = DoctorSerializer(doctor, data=request.data)
@@ -69,15 +86,21 @@ class DoctorDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         doctor = Doctor.objects.get(pk=pk)
         doctor.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class PatientDetailView(APIView):
+    serializer_class = PatientSerializer
+
     def get(self, request, pk):
         patient = Patient.objects.get(pk=pk)
         serializer = PatientSerializer(patient)
         return Response(serializer.data)
+
     def put(self, request, pk):
         patient = Patient.objects.get(pk=pk)
         serializer = PatientSerializer(patient, data=request.data)
@@ -85,16 +108,21 @@ class PatientDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         patient = Patient.objects.get(pk=pk)
         patient.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class MedicationDetailView(APIView):
+    serializer_class = MedicationSerializer
+
     def get(self, request, pk):
         medication = Medication.objects.get(pk=pk)
         serializer = MedicationSerializer(medication)
         return Response(serializer.data)
+
     def put(self, request, pk):
         medication = Medication.objects.get(pk=pk)
         serializer = MedicationSerializer(medication, data=request.data)
@@ -102,16 +130,21 @@ class MedicationDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         medication = Medication.objects.get(pk=pk)
         medication.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class AppointmentDetailView(APIView):
+    serializer_class = AppointmentSerializer
+
     def get(self, request, pk):
         appointment = Appointment.objects.get(pk=pk)
         serializer = AppointmentSerializer(appointment)
         return Response(serializer.data)
+
     def put(self, request, pk):
         appointment = Appointment.objects.get(pk=pk)
         serializer = AppointmentSerializer(appointment, data=request.data)
@@ -119,6 +152,7 @@ class AppointmentDetailView(APIView):
             appointment.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         appointment = Appointment.objects.get(pk=pk)
         appointment.delete()

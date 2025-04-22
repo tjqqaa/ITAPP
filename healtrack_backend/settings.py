@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'healtrack_backend',
     'rest_framework',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +112,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERERS_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',]
+        'rest_framework.renderers.JSONRenderer',],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'HealTrack API',
+    'DESCRIPTION': 'API for HealTrack mobile app',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 # Internationalization
