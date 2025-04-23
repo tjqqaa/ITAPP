@@ -9,7 +9,7 @@ class Patient extends User {
   final String? doctorId; // Reference to the assigned doctor
 
   Patient({
-    required String id,
+    required int id,
     required String name,
     required String surname,
     required String email,

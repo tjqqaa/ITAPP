@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "phoneNumber": phone,
             "dateOfBirth": dob,
             "specialization": _specializationController.text.trim(),
-            "doctor": 0,
+            "id" : 0
           }),
         );
 

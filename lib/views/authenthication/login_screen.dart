@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (email == "doctor@email.com" && password == "123456") {
       // Crear un doctor de prueba
       final doctor = Doctor(
-        id: "1",
+        id: 1,
         name: "Dr. Juan",
         surname: "Gómez",
         email: "doctor@email.com",
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (email == "paciente@email.com" && password == "123456") {
       // Crear un paciente de prueba
       final patient = Patient(
-        id: "1",
+        id: 1,
         name: "Juan",
         surname: "Pérez",
         email: "paciente@email.com",

@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
   // A sample patient object for test/demo purposes
   final Patient patient = Patient(
-    id: '1',
+    id: 1,
     name: 'Juan',
     surname: 'Pérez',
     email: 'juan.perez@example.com',

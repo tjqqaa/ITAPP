@@ -5,7 +5,7 @@ class Doctor extends User {
   final List<String> patients;
 
   Doctor({
-    required String id,
+    required int id,
     required String name,
     required String surname,
     required String email,
