@@ -7,7 +7,7 @@ from healtrack_backend.serializers import DoctorSerializer, PatientSerializer, A
 from rest_framework.generics import ListAPIView
 
 
-class DoctorListCreateView(generics.ListCreateAPIView):
+class DoctorListCreateView(APIView):
     serializer_class = DoctorSerializer
 
     def get(self, request):
