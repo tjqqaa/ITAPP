@@ -7,6 +7,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PatientSerializer(serializers.ModelSerializer):
+    doctor = serializers.PrimaryKeyRelatedField(
+        queryset=Doctor.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
     class Meta:
         model = Patient
         fields = '__all__'
