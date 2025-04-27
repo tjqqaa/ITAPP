@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
+import 'package:project/views/doctors/appointments_doctor_screen.dart';
+import 'package:project/views/doctors/doctor_patients_screen.dart';
+import 'package:project/views/doctors/doctor_preinscriptions_screen.dart';
 import 'package:project/views/profile_screen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
@@ -47,21 +50,30 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                 icon: Icons.person_search,
                 label: 'Mis Pacientes',
                 onTap: () {
-                  // Acción para ver pacientes
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DoctorPatientsScreen(doctor: widget.doctor)),
+                  );
                 },
               ),
               _buildCustomButton(
                 icon: Icons.calendar_today,
                 label: 'Citas',
                 onTap: () {
-                  // Acción para citas
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AppointmentsDoctorScreen(doctor: widget.doctor)),
+                  );
                 },
               ),
               _buildCustomButton(
                 icon: Icons.description,
                 label: 'Prescripciones',
                 onTap: () {
-                  // Acción para prescripciones
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DoctorPreinscriptionsScreen(doctor: widget.doctor)),
+                  );
                 },
               ),
               _buildCustomButton(
