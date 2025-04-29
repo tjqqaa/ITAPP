@@ -7,6 +7,10 @@ CSRF_TRUSTED_ORIGINS = ['https://'+os.environ['WEBSITE_HOSTNAME']]
 DEBUG = False
 SECRET_KEY = os.environ['MY_SECRET_KEY']
 
+ADMINS = [
+    ('Piotr', 'piotrek.bartczak356@gmail.com'),
+]
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -45,3 +49,11 @@ DATABASES = {
 }
 
 STATIC_ROOT = BASE_DIR/"staticfiles"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = f"Django Errors <{EMAIL_HOST_USER}>"

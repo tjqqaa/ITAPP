@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERERS_CLASSES': [
+    'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
