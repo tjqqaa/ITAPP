@@ -20,11 +20,12 @@ class Patient(User):
     mood = models.CharField(max_length=100)
     emergencyContact = models.CharField(max_length=15)
     healthPoints = models.IntegerField()
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='patients')
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True, related_name='patients')
 
     def __str__(self):
-        return f"{self.name} {self.surname} (Patient of {self.doctor.name})"
-
+        if self.doctor:
+            return f"{self.name} {self.surname} (Patient of {self.doctor.name})"
+        return (f"{self.name} {self.surname} (No doctor assigned)")
 
 class Medication(models.Model):
     name = models.CharField(max_length=100)
@@ -51,7 +52,7 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='doctor_appointments')
     appointment_date = models.DateTimeField()
     reason = models.TextField()
-    location     = models.CharField(max_length=255, null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     state = models.CharField(max_length=10, choices=STATE_CHOICES, default='pending')
 
