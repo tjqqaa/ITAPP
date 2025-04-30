@@ -4,7 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 from healtrack_backend.views import DoctorListCreateView, MedicationListCreateView, \
     PatientListCreateView, AppointmentListCreateView, DoctorDetailView, PatientDetailView, AppointmentDetailView, \
-    MedicationDetailView
+    MedicationDetailView, test_error
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,6 +16,8 @@ urlpatterns = [
     path('patients/<int:pk>/', PatientDetailView.as_view()),
     path('appointments/<int:pk>/', AppointmentDetailView.as_view()),
     path('medications/<int:pk>/', MedicationDetailView.as_view()),
+
+    path('test-500/', test_error),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:

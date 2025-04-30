@@ -7,6 +7,10 @@ from healtrack_backend.serializers import DoctorSerializer, PatientSerializer, A
 from rest_framework.generics import ListAPIView
 
 
+def test_error(request):
+    raise Exception("Testowy wyjątek 500")
+
+
 class DoctorListCreateView(APIView):
     serializer_class = DoctorSerializer
 
