@@ -64,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "mood": "Neutral",
             "emergencyContact": _emergencyContactController.text.trim(),
             "healthPoints": 0,
-            "doctor": 0,
+            "doctor": null,
           }),
         );
 
