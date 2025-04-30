@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('healtrack_backend', '0003_rename_localization_appointment_location'),
+        ('healtrack_backend', '0001_initial'),
     ]
 
     operations = [
