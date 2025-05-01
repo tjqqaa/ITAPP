@@ -6,6 +6,7 @@ import 'package:project/views/patients/appointments_patient_screen.dart';
 import 'package:project/services/notification_service.dart';
 import 'package:project/views/patients/mental_health.dart';
 import 'package:project/views/patients/contact_doctor_screen.dart';
+import 'package:project/views/patients/prescriptions_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -75,8 +76,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               ),
               _buildCustomButton(
                 icon: Icons.medical_services,
-                label: 'Prescripciones',
-                onTap: () {},
+                label: 'Prescriptions',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PrescriptionsScreen(),
+                    ),
+                  );
+                },
               ),
               _buildCustomButton(
                 icon: Icons.phone,
