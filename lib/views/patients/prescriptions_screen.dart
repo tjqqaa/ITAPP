@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+
 class PrescriptionsScreen extends StatelessWidget {
   const PrescriptionsScreen({Key? key}) : super(key: key);
 
@@ -7,9 +9,9 @@ class PrescriptionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.purple, // Same purple color as the rest of the app
         title: Text(
-          'Prescripciones',
+          'Prescriptions',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -19,52 +21,66 @@ class PrescriptionsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Encabezado
+            // Header Text
             Text(
-              'Lista de Prescripciones',
+              'Your Prescriptions',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+                color: Colors.purple, // Same purple color
               ),
             ),
             SizedBox(height: 20),
 
-            // Simulación de un listado de prescripciones con tarjetas
+            // Grid of prescriptions
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Simulamos 5 prescripciones
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Two columns in the grid
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.75, // Adjusting the aspect ratio of each item
+                ),
+                itemCount: 6, // Simulating 6 prescriptions
                 itemBuilder: (context, index) {
                   return Card(
                     elevation: 5,
-                    margin: EdgeInsets.symmetric(vertical: 8),
+                    margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.medical_services,
-                        color: Colors.blueAccent,
-                        size: 40,
-                      ),
-                      title: Text(
-                        'Prescripción #${index + 1}',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        'Medicamento: Simulado',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.blueAccent,
-                      ),
+                    child: InkWell(
                       onTap: () {
-                        // Acción al hacer tap (aún no definida)
+                        // Action when the user taps on a prescription
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Detalles de la prescripción')),
+                          SnackBar(content: Text('Viewing prescription #${index + 1}')),
                         );
                       },
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.medical_services,
+                              color: Colors.purple, // Purple icon for consistency
+                              size: 40,
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'Prescription #${index + 1}',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Medication: Simulated',
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 },
