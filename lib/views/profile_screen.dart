@@ -3,6 +3,7 @@ import 'package:project/models/doctor.dart';
 import 'package:project/models/patient.dart';
 import 'package:project/views/patients/patient_home_screen.dart';
 import 'package:project/views/doctors/doctor_home_screen.dart';
+import 'package:project/views/authenthication/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final dynamic user; // Puede ser tanto Patient como Doctor
@@ -80,6 +81,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 child: const Text('Edit Profile', style: TextStyle(fontSize: 18)),
+              ),
+            ),
+            // Añadir el botón de Cerrar Sesión aquí
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Redirigir a la pantalla de inicio de sesión
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()), // Asegúrate de tener la pantalla de LoginScreen
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Color rojo para llamar la atención
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Log Out', style: TextStyle(fontSize: 18)),
               ),
             ),
           ],
