@@ -7,6 +7,7 @@ import 'package:project/services/notification_service.dart';
 import 'package:project/views/patients/mental_health.dart';
 import 'package:project/views/patients/contact_doctor_screen.dart';
 import 'package:project/views/patients/prescriptions_screen.dart';
+import 'package:project/views/patients/patient_mood_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -119,9 +120,16 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 },
               ),
               _buildCustomButton(
-                icon: Icons.settings,
-                label: 'Ajustes',
-                onTap: () {},
+                icon: Icons.emoji_emotions,
+                label: 'Mi Estado de Ánimo',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PatientMoodScreen(patient: widget.patient),
+                    ),
+                  );
+                },
               ),
               _buildCustomButton(
                 icon: Icons.psychology,

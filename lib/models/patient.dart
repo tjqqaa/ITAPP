@@ -63,4 +63,19 @@ class Patient extends User {
     });
     return map;
   }
+
+  Map<String, dynamic> toApiMap() {
+    return {
+      'doctor': int.tryParse(doctorId ?? '0') ?? 0,
+      'name': name,
+      'surname': surname,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'mood': mood,
+      'emergencyContact': emergencyContact,
+      'healthPoints': healthPoints,
+    };
+  }
+
 }
