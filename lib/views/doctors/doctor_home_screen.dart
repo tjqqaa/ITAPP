@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
-import 'package:project/views/doctors/appointments_doctor_screen.dart';
+import 'package:project/others/custom_button.dart';
+import 'package:project/views/doctors/doctor_appointments_home_screen.dart';
 import 'package:project/views/doctors/doctor_patients_screen.dart';
 import 'package:project/views/doctors/doctor_preinscriptions_screen.dart';
 import 'package:project/views/profile_screen.dart';
@@ -8,7 +9,7 @@ import 'package:project/views/profile_screen.dart';
 class DoctorHomeScreen extends StatefulWidget {
   final Doctor doctor;
 
-  const DoctorHomeScreen({Key? key, required this.doctor}) : super(key: key);
+  const DoctorHomeScreen({super.key, required this.doctor});
 
   @override
   State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
@@ -46,7 +47,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.person_search,
                 label: 'Mis Pacientes',
                 onTap: () {
@@ -56,17 +58,19 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.calendar_today,
                 label: 'Citas',
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AppointmentsDoctorScreen(doctor: widget.doctor)),
+                    MaterialPageRoute(builder: (context) => DoctorAppointmentsHomeScreen(doctor: widget.doctor)),
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.description,
                 label: 'Prescripciones',
                 onTap: () {
@@ -76,7 +80,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.settings,
                 label: 'Ajustes',
                 onTap: () {
@@ -101,32 +106,4 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     );
   }
 
-  Widget _buildCustomButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return SizedBox(
-      width: 160,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 40),
-            const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontSize: 16), textAlign: TextAlign.center),
-          ],
-        ),
-      ),
-    );
-  }
 }

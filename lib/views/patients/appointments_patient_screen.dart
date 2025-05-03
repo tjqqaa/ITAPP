@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/others/custom_button.dart';
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 import 'package:project/models/patient.dart';
 import 'package:project/views/patients/make_patient_appointments_screen.dart';
@@ -80,14 +81,14 @@ class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildCustomButton(
-                  key: const ValueKey('make_appointment_button'),
+                buildCustomButton(
+                  context: context,
                   icon: Icons.event_available,
                   label: 'Make an appointment',
                   onTap: () => _onItemTapped(AppointmentScreens.makeAppointment),
                 ),
-                _buildCustomButton(
-                  key: const ValueKey('see_appointments_button'),
+                buildCustomButton(
+                  context: context,
                   icon: Icons.calendar_month,
                   label: 'Show appointents',
                   onTap: () => _onItemTapped(AppointmentScreens.showAppointments),
@@ -109,39 +110,6 @@ class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
           BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: 'Medicines'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCustomButton({
-    Key? key,
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          key: key,
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 30),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 50),
-              const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontSize: 18)),
-            ],
-          ),
-        ),
       ),
     );
   }

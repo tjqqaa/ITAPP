@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/patient.dart';
+import 'package:project/others/custom_button.dart';
 import 'package:project/views/profile_screen.dart';
 import 'package:project/views/patients/medical_history.dart';
 import 'package:project/views/patients/appointments_patient_screen.dart';
@@ -12,7 +13,7 @@ import 'package:project/views/patients/patient_mood_screen.dart';
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
 
-  const PatientHomeScreen({Key? key, required this.patient}) : super(key: key);
+  const PatientHomeScreen({super.key, required this.patient});
 
   @override
   State<PatientHomeScreen> createState() => _PatientHomeScreenState();
@@ -50,7 +51,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             children: [
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.calendar_today,
                 label: 'Mis Citas',
                 onTap: () {
@@ -63,7 +65,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.history,
                 label: 'Historial Médico',
                 onTap: () {
@@ -75,7 +78,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.medical_services,
                 label: 'Prescriptions',
                 onTap: () {
@@ -87,7 +91,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.phone,
                 label: 'Contactar a mi Doctor',
                 onTap: () {
@@ -99,7 +104,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.alarm,
                 label: 'Recordatorio Pastillas',
                 onTap: () async {
@@ -119,7 +125,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   }
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.emoji_emotions,
                 label: 'Mi Estado de Ánimo',
                 onTap: () {
@@ -131,7 +138,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
-              _buildCustomButton(
+              buildCustomButton(
+                context: context,
                 icon: Icons.psychology,
                 label: 'Salud Mental',
                 onTap: () {
@@ -158,35 +166,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCustomButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return SizedBox(
-      width: 160,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 40),
-            const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontSize: 16), textAlign: TextAlign.center),
-          ],
-        ),
       ),
     );
   }
