@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
 
-class DoctorCreateAppointmentScreen extends StatefulWidget {
+class DoctorSelectPatientToMakeAppointment extends StatefulWidget {
   final Doctor doctor;
 
-  const DoctorCreateAppointmentScreen({super.key, required this.doctor});
+  const DoctorSelectPatientToMakeAppointment({super.key, required this.doctor});
 
   @override
-  State<DoctorCreateAppointmentScreen> createState() => _DoctorCreateAppointmentScreenState();
+  State<DoctorSelectPatientToMakeAppointment> createState() => _DoctorSelectPatientToMakeAppointmentState();
 }
 
-class _DoctorCreateAppointmentScreenState extends State<DoctorCreateAppointmentScreen> {
+class _DoctorSelectPatientToMakeAppointmentState extends State<DoctorSelectPatientToMakeAppointment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -5,24 +5,16 @@ class Doctor extends User {
   final List<String> patients;
 
   Doctor({
-    required int id,
-    required String name,
-    required String surname,
-    required String email,
-    String? phoneNumber,
-    required DateTime dateOfBirth,
-    List<String> appointments = const [],
+    required super.id,
+    required super.name,
+    required super.surname,
+    required super.email,
+    super.phoneNumber,
+    required super.dateOfBirth,
+    super.appointments,
     this.patients = const [],
     required this.specialization,
-  }) : super(
-    id: id,
-    name: name,
-    surname: surname,
-    email: email,
-    phoneNumber: phoneNumber,
-    dateOfBirth: dateOfBirth,
-    appointments: appointments, // ya está en User
-  );
+  });
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
     return Doctor(

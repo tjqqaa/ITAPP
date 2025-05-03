@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
 import 'package:project/others/custom_button.dart';
-import 'package:project/views/doctors/doctor_create_appointment_screen.dart';
+import 'package:project/views/doctors/doctor_select_patient_to_make_appointment.dart';
 import 'package:project/views/doctors/doctor_show_appointments_screen.dart';
 
 class DoctorAppointmentsHomeScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _DoctorAppointmentsHomeScreenState extends State<DoctorAppointmentsHomeScr
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DoctorCreateAppointmentScreen(doctor: widget.doctor)),
+                    MaterialPageRoute(builder: (context) => DoctorSelectPatientToMakeAppointment(doctor: widget.doctor)),
                   );
                 },
               ),
