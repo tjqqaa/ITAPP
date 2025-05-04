@@ -1,22 +1,33 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models import OneToOneField
 
-class User(models.Model):
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+
+# class User(models.Model):
+#     name = models.CharField(max_length=100)
+#     surname = models.CharField(max_length=100)
+#     email = models.EmailField(unique=True)
+#     phoneNumber = models.CharField(max_length=15)
+#     dateOfBirth = models.DateField()
+#
+#     class Meta:
+#         abstract = True
+
+
+class CustomUser(AbstractUser):
     phoneNumber = models.CharField(max_length=15)
     dateOfBirth = models.DateField()
 
-    class Meta:
-        abstract = True
 
-class Doctor(User):
+class Doctor(models.Model):
+    user = OneToOneField(CustomUser, on_delete=models.CASCADE)
     specialization = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.name} {self.surname} ({self.specialization})"
 
-class Patient(User):
+class Patient(models.Model):
+    user = OneToOneField(CustomUser, on_delete=models.CASCADE)
     mood = models.CharField(max_length=100)
     emergencyContact = models.CharField(max_length=15)
     healthPoints = models.IntegerField()

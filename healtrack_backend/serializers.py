@@ -1,10 +1,19 @@
 from rest_framework import serializers
 from healtrack_backend.models import User,Doctor,Patient,Appointment,Medication
 
-class UserSerializer(serializers.ModelSerializer):
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = '__all__'
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username','email','password','first_name','last_name','birth_date','phone_number',]
+
 
 class PatientSerializer(serializers.ModelSerializer):
     doctor = serializers.PrimaryKeyRelatedField(
