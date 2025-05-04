@@ -6,31 +6,23 @@ class Patient extends User {
   final bool isEmergencyContactNotified;
   final String? emergencyContact;
   final int healthPoints;
-  final String? doctorId; // Reference to the assigned doctor
+  final int? doctorId; // Reference to the assigned doctor
 
   Patient({
-    required int id,
-    required String name,
-    required String surname,
-    required String email,
-    String? phoneNumber,
-    required DateTime dateOfBirth,
-    List<String> appointments = const [],
+    required super.id,
+    required super.name,
+    required super.surname,
+    required super.email,
+    super.phoneNumber,
+    required super.dateOfBirth,
+    super.appointments,
     this.medications = const [],
     this.mood = "Neutral",
     this.isEmergencyContactNotified = false,
     this.emergencyContact,
     this.healthPoints = 0,
     this.doctorId,
-  }) : super(
-    id: id,
-    name: name,
-    surname: surname,
-    email: email,
-    phoneNumber: phoneNumber,
-    dateOfBirth: dateOfBirth,
-    appointments: appointments,
-  );
+  });
 
   factory Patient.fromMap(Map<String, dynamic> map) {
     return Patient(
@@ -66,7 +58,7 @@ class Patient extends User {
 
   Map<String, dynamic> toApiMap() {
     return {
-      'doctor': int.tryParse(doctorId ?? '0') ?? 0,
+      'doctor': doctorId,
       'name': name,
       'surname': surname,
       'email': email,
