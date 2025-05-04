@@ -16,7 +16,6 @@ class DoctorAppointmentsHomeScreen extends StatefulWidget {
 class _DoctorAppointmentsHomeScreenState extends State<DoctorAppointmentsHomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final appointments = widget.doctor.appointments;
 
     return Scaffold(
       appBar: AppBar(
