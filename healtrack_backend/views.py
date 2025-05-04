@@ -157,3 +157,22 @@ class AppointmentDetailView(APIView):
         appointment = Appointment.objects.get(pk=pk)
         appointment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AppointmentsById(APIView):
+    serializer_class = AppointmentSerializer
+    def get(self, request, pk):
+        appointments = Appointment.objects.filter(doctor=pk)
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
+
+
+class PatientsById(APIView):
+    serializer_class = PatientSerializer
+    def get(self, request, pk):
+        patients = Patient.objects.filter(doctor=pk)
+        serializer = PatientSerializer(patients, many=True)
+        return Response(serializer.data)
+
+
+
