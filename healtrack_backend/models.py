@@ -17,6 +17,11 @@ from django.db.models import OneToOneField
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15)
     birth_date = models.DateField()
+    ROLE_CHOICES = [
+        ('doctor', 'Doctor'),
+        ('patient', 'Patient'),
+    ]
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)
 
 
 class Doctor(models.Model):

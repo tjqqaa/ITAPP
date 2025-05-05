@@ -73,7 +73,10 @@ class SimpleLoginView(APIView):
         user = authenticate(username=username, password=password)
 
         if user is not None:
-            return Response({"message": "Logged in successfully"}, status=status.HTTP_200_OK)
+            return Response({
+                "message": "Logged in successfully",
+                "role": user.role
+            }, status=status.HTTP_200_OK)
         return Response({"error": "Incorrect username or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
 

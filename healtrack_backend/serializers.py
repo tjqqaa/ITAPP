@@ -46,6 +46,7 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
 
         user = CustomUser.objects.create_user(**user_data)
+        user.role = 'patient'
         user.set_password(password)
         user.save()
 
@@ -116,6 +117,7 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
 
         user = CustomUser.objects.create_user(**user_data)
+        user.role = 'doctor'
         user.set_password(password)
         user.save()
 
@@ -154,9 +156,11 @@ class DoctorUpdateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source='user.role', read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ['username','password']
+        fields = ['username','password','role']
 
 
 
