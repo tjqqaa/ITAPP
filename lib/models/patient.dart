@@ -48,6 +48,7 @@ class Patient extends User {
       password: map['password'] ?? '',
     );
   }
+  factory Patient.fromJson(Map<String, dynamic> json) => Patient.fromMap(json);
 
 
   @override
@@ -64,18 +65,22 @@ class Patient extends User {
     return map;
   }
 
+
+
   Map<String, dynamic> toApiMap() {
     return {
-      'doctor': doctorId,
-      'name': name,
-      'surname': surname,
+      'username': username,
       'email': email,
-      'phoneNumber': phoneNumber,
-      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'birth_date': dateOfBirth.toIso8601String(),
+      'phone_number': phoneNumber,
+      'first_name': name,
+      'last_name': surname,
       'mood': mood,
-      'emergencyContact': emergencyContact,
-      'healthPoints': healthPoints,
+      'emergency_contact': emergencyContact,
+      'health_points': healthPoints,
+      'doctor': doctorId,
     };
   }
+
 
 }

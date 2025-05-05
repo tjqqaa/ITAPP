@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:project/models/doctor.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:project/models/patient.dart';
+import 'package:project/models/doctor.dart';
 import 'package:project/views/patients/patient_home_screen.dart';
 import 'package:project/views/doctors/doctor_home_screen.dart';
 import 'package:project/views/authenthication/login_screen.dart';
@@ -16,6 +19,42 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _selectedIndex = 1;
+  bool _isLoading = true;
+  Patient? _fetchedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    if (widget.user is Patient) {
+      final id = widget.user.id;
+      final response = await http.get(
+        Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/$id/'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      print("User ID: ${widget.user.id}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _fetchedUser = Patient.fromJson(data);
+          _isLoading = false;
+        });
+      } else {
+        // Manejo de errores si el backend no responde correctamente
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al obtener el perfil')),
+        );
+      }
+    } else {
+      // Si es Doctor, no hacemos GET aquí (extender si es necesario)
+      setState(() => _isLoading = false);
+    }
+  }
 
   void _onItemTapped(int index) {
     if (index == 0) {
@@ -31,11 +70,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }
     }
-    // No hacemos nada si el índice es 1 (Perfil), porque ya estamos ahí
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading || _fetchedUser == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final user = _fetchedUser!;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -46,61 +92,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(context),
+            _buildProfileHeader(user),
             const SizedBox(height: 20),
-            _buildProfileDetail(context, 'Phone Number', widget.user.phoneNumber ?? 'Not provided'),
-            _buildProfileDetail(context, 'Date of Birth', widget.user.dateOfBirth.toString()), // Puedes darle formato si lo prefieres
+            _buildProfileDetail('Phone Number', user.phoneNumber ?? 'Not provided'),
+            _buildProfileDetail('Date of Birth', user.dateOfBirth.toString()),
             const SizedBox(height: 20),
-            _buildSectionTitle(context, 'Medications'),
-            widget.user is Patient
-                ? widget.user.medications.isEmpty
-                ? Text('No medications registered.')
-                : Text(widget.user.medications.join(', ')) // Mostrar medicamentos
-                : const SizedBox.shrink(), // No mostrar medicamentos para Doctor
+            _buildSectionTitle('Medications'),
+            user.medications.isEmpty
+                ? const Text('No medications registered.')
+                : Text(user.medications.join(', ')),
             const SizedBox(height: 20),
-            _buildSectionTitle(context, 'Appointments'),
-            widget.user is Patient
-                ? Text('No appointments scheduled.') // Aquí puedes agregar lógica para citas del paciente
-                : const Text('No appointments scheduled for the doctor.'), // Aquí puedes agregar lógica para citas del doctor
+            _buildSectionTitle('Appointments'),
+            const Text('No appointments scheduled.'), // TODO: agregar lógica real
             const SizedBox(height: 20),
-            _buildProfileDetail(context, 'Mood', widget.user is Patient ? widget.user.mood ?? 'Not specified' : 'Not applicable'),
-            _buildProfileDetail(context, 'Emergency Contact', widget.user is Patient ? widget.user.emergencyContact ?? 'Not provided' : 'Not applicable'),
-            _buildProfileDetail(context, 'Health Points', widget.user is Patient ? widget.user.healthPoints.toString() : 'N/A'),
+            _buildProfileDetail('Mood', user.mood ?? 'Not specified'),
+            _buildProfileDetail('Emergency Contact', user.emergencyContact ?? 'Not provided'),
+            _buildProfileDetail('Health Points', user.healthPoints.toString()),
             const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Aquí puedes navegar a EditProfileScreen si lo implementas
+                  // Navegar a pantalla de edición si se implementa
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: const Text('Edit Profile', style: TextStyle(fontSize: 18)),
               ),
             ),
-            // Añadir el botón de Cerrar Sesión aquí
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Redirigir a la pantalla de inicio de sesión
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()), // Asegúrate de tener la pantalla de LoginScreen
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Color rojo para llamar la atención
+                  backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: const Text('Log Out', style: TextStyle(fontSize: 18)),
               ),
@@ -122,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context) {
+  Widget _buildProfileHeader(Patient user) {
     return Row(
       children: [
         CircleAvatar(
@@ -138,14 +174,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 const Text('Name:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 8),
-                Text(widget.user.name),
+                Text(user.name),
               ],
             ),
             Row(
               children: [
                 const Text('Surname:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 8),
-                Text(widget.user.surname),
+                Text(user.surname),
               ],
             ),
           ],
@@ -154,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileDetail(BuildContext context, String label, String value) {
+  Widget _buildProfileDetail(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -169,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(

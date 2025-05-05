@@ -55,7 +55,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.calendar_today,
-                label: 'Mis Citas',
+                label: 'My Appointments',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -69,7 +69,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.history,
-                label: 'Historial Médico',
+                label: 'Medical History',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -95,7 +95,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.phone,
-                label: 'Contactar a mi Doctor',
+                label: 'Contact my Doctor',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -108,7 +108,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.alarm,
-                label: 'Recordatorio Pastillas',
+                label: 'Pills Reminders',
                 onTap: () async {
                   await NotificationService.showMedicationReminder(
                     id: 1,
@@ -117,11 +117,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     delay: Duration(seconds: 5), // Delay artificial de prueba
                   );
 
-                  debugPrint("✅ Notificación lanzada (o en camino)");
+                  debugPrint("✅ Notification launched");
 
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Recordatorio programado")),
+                      SnackBar(content: Text("Reminder programmed")),
                     );
                   }
                 },
@@ -129,7 +129,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.emoji_emotions,
-                label: 'Mi Estado de Ánimo',
+                label: 'My mood',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -153,7 +153,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.psychology,
-                label: 'Salud Mental',
+                label: 'Mental Health',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -175,8 +175,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

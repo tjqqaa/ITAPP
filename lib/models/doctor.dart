@@ -38,6 +38,7 @@ class Doctor extends User {
     );
   }
 
+  factory Doctor.fromJson(Map<String, dynamic> json) => Doctor.fromMap(json);
 
   @override
   Map<String, dynamic> toMap() {
