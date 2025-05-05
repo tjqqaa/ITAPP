@@ -27,11 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // URL del endpoint de login
     final url = Uri.parse('https://healtrack-app-backend.azurewebsites.net/login/');
 
     try {
-      // Realizar la solicitud POST
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -42,38 +40,35 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Si el login es exitoso, decodificar los datos
         final data = jsonDecode(response.body);
-        print(data);
-        // Comprobar si la respuesta contiene un campo específico para Doctor o Patient
-        if (data.containsKey('specialization')) {
-          // Si tiene el campo 'specialization', es un doctor
-          final doctor = Doctor.fromJson(data);
+        print("Login response: $data");
+
+        final role = data['role'];
+        final userData = data['user']; // Suponiendo que los datos del usuario vienen aquí
+        print(role);
+        if (role == 'doctor' && userData != null) {
+          final doctor = Doctor.fromJson(userData);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: doctor)),
           );
-        } else if (data.containsKey('mood')) {
-          // Si tiene el campo 'mood', es un paciente
-          final patient = Patient.fromJson(data);
+        } else if (role == 'patient' && userData != null) {
+          final patient = Patient.fromJson(userData);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: patient)),
           );
         } else {
-          // Si no tiene campos específicos, mostrar un mensaje de error
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tipo de usuario no reconocido')),
+            const SnackBar(content: Text('Tipo de usuario no reconocido o datos incompletos')),
           );
         }
       } else {
-        // Si la respuesta no es 200, mostrar mensaje de error
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Credenciales incorrectas')),
         );
       }
     } catch (e) {
-      // Manejar errores de conexión o cualquier otra excepción
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error al conectar con el servidor')),
       );
@@ -83,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
 
   void _navigateToSignUp() {
     Navigator.push(

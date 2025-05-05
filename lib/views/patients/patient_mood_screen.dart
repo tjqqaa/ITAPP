@@ -54,7 +54,8 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
     );
 
     final updatedPatientMap = updatedPatient.toApiMap();
-
+    print(updatedPatientMap);
+    print(widget.patient.id);
     final response = await http.put(
       Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/${widget.patient.id}/'),
       headers: {'Content-Type': 'application/json'},
@@ -79,14 +80,14 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tu estado de ánimo'),
+        title: const Text('Your mood'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             const Text(
-              'Selecciona tu estado de ánimo actual:',
+              'Select your actual mood',
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
@@ -105,7 +106,7 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
                   });
                 }
               },
-              decoration: const InputDecoration(labelText: 'Estado de ánimo'),
+              decoration: const InputDecoration(labelText: 'My mood'),
             ),
             const SizedBox(height: 30),
             _isLoading
@@ -113,7 +114,7 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
                 : ElevatedButton.icon(
               onPressed: _updateMood,
               icon: const Icon(Icons.mood),
-              label: const Text('Actualizar'),
+              label: const Text('Update'),
             ),
           ],
         ),

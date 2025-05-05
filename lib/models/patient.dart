@@ -70,6 +70,7 @@ class Patient extends User {
   Map<String, dynamic> toApiMap() {
     return {
       'username': username,
+      'password': password,
       'email': email,
       'birth_date': dateOfBirth.toIso8601String(),
       'phone_number': phoneNumber,
@@ -81,6 +82,8 @@ class Patient extends User {
       'doctor': doctorId,
     };
   }
+
+
 
 
 }
