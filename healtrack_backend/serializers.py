@@ -54,24 +54,32 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         patient = Patient.objects.create(user=user, doctor=doctor, **validated_data)
         return patient
 
+
+class PatientUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', required=False)
+    email = serializers.EmailField(source='user.email', required=False)
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    birth_date = serializers.DateField(source='user.birth_date', required=False)
+    phone_number = serializers.CharField(source='user.phone_number', required=False)
+
+    class Meta:
+        model = Patient
+        fields = [
+            'username', 'email', 'first_name', 'last_name',
+            'birth_date', 'phone_number',
+            'mood', 'emergency_contact', 'health_points', 'doctor'
+        ]
+
     def update(self, instance, validated_data):
-        # Update user data
-        user = instance.user
-        user.username = validated_data.get('username', user.username)
-        user.email = validated_data.get('email', user.email)
-        user.first_name = validated_data.get('first_name', user.first_name)
-        user.last_name = validated_data.get('last_name', user.last_name)
-        user.birth_date = validated_data.get('birth_date', user.birth_date)
-        user.phone_number = validated_data.get('phone_number', user.phone_number)
-        user.save()
+        user_data = validated_data.pop('user', {})
+        for attr, value in user_data.items():
+            setattr(instance.user, attr, value)
+        instance.user.save()
 
-        # Update patient fields
-        instance.mood = validated_data.get('mood', instance.mood)
-        instance.emergency_contact = validated_data.get('emergency_contact', instance.emergency_contact)
-        instance.health_points = validated_data.get('health_points', instance.health_points)
-        instance.doctor = validated_data.get('doctor', instance.doctor)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
-
         return instance
 
 
@@ -113,6 +121,35 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
 
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
+
+
+class DoctorUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', required=False)
+    email = serializers.EmailField(source='user.email', required=False)
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    birth_date = serializers.DateField(source='user.birth_date', required=False)
+    phone_number = serializers.CharField(source='user.phone_number', required=False)
+
+    class Meta:
+        model = Doctor
+        fields = [
+            'username', 'email', 'first_name', 'last_name',
+            'birth_date', 'phone_number',
+            'specialization'
+        ]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        for attr, value in user_data.items():
+            setattr(instance.user, attr, value)
+        instance.user.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
 
 
 

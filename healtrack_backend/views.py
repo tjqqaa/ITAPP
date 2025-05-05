@@ -2,22 +2,29 @@ from django.contrib.auth import authenticate
 from django.db import IntegrityError
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from healtrack_backend.models import Doctor, Patient, Appointment, Medication
 from healtrack_backend.serializers import DoctorSerializer, PatientRegisterSerializer, AppointmentSerializer, \
-    MedicationSerializer, PatientSerializer, DoctorRegisterSerializer, UserSerializer
-from rest_framework.generics import ListAPIView
+    MedicationSerializer, PatientSerializer, DoctorRegisterSerializer, UserSerializer, PatientUpdateSerializer, \
+    DoctorUpdateSerializer
+from rest_framework.generics import ListAPIView, get_object_or_404
 
 
 def test_error(request):
     raise Exception("Testowy wyjątek 500")
 
 
+class IsUserOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+
+
 @extend_schema(
     responses={
-201: OpenApiResponse(response=PatientRegisterSerializer, description="Patient registered successfully."),
+        201: OpenApiResponse(response=PatientRegisterSerializer, description="Patient registered successfully."),
         400: OpenApiResponse(description="Username already exists")
     }
 )
@@ -135,7 +142,15 @@ class MedicationListCreateView(APIView):
 
 
 class DoctorDetailView(APIView):
-    serializer_class = DoctorSerializer
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return DoctorSerializer
+        elif self.request.method == 'PUT':
+            return DoctorUpdateSerializer
+
+    def get_permission_classes(self):
+        if self.request.method == 'PUT':
+            return [IsUserOwner]
 
     def get(self, request, pk):
         doctor = Doctor.objects.get(pk=pk)
@@ -143,12 +158,12 @@ class DoctorDetailView(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
-        doctor = Doctor.objects.get(pk=pk)
-        serializer = DoctorSerializer(doctor, data=request.data)
+        doctor = get_object_or_404(Doctor, pk=pk)
+        serializer = DoctorUpdateSerializer(doctor, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         doctor = Doctor.objects.get(pk=pk)
@@ -157,7 +172,15 @@ class DoctorDetailView(APIView):
 
 
 class PatientDetailView(APIView):
-    serializer_class = PatientSerializer
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return PatientSerializer
+        elif self.request.method == 'PUT':
+            return PatientRegisterSerializer
+
+    def get_permission_classes(self):
+        if self.request.method == 'PUT':
+            return [IsUserOwner]
 
     def get(self, request, pk):
         patient = Patient.objects.get(pk=pk)
@@ -165,12 +188,12 @@ class PatientDetailView(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
-        patient = Patient.objects.get(pk=pk)
-        serializer = PatientRegisterSerializer(patient, data=request.data)
+        patient = get_object_or_404(Patient, pk=pk)
+        serializer = PatientUpdateSerializer(patient, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         patient = Patient.objects.get(pk=pk)
