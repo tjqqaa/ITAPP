@@ -49,6 +49,8 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
       healthPoints: widget.patient.healthPoints,
       mood: _selectedMood,
       doctorId: widget.patient.doctorId,
+      username: widget.patient.username,
+      password: widget.patient.password
     );
 
     final updatedPatientMap = updatedPatient.toApiMap();

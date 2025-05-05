@@ -40,6 +40,8 @@ class _MainScreenState extends State<MainScreen> {
     mood: 'Good',
     emergencyContact: 'Jane Pérez',
     healthPoints: 100,
+    username: "juanp",
+    password: "123456"
   );
 
   late final List<Widget> _screens;

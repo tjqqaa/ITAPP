@@ -22,25 +22,33 @@ class Patient extends User {
     this.emergencyContact,
     this.healthPoints = 0,
     this.doctorId,
+    required super.username,
+    required super.password
   });
-
   factory Patient.fromMap(Map<String, dynamic> map) {
     return Patient(
-      id: map['id'],
-      name: map['name'],
-      surname: map['surname'],
-      email: map['email'],
-      phoneNumber: map['phoneNumber'],
-      dateOfBirth: DateTime.parse(map['dateOfBirth']),
-      appointments: List<String>.from(map['appointments'] ?? []),
-      medications: List<String>.from(map['medications'] ?? []),
-      mood: map['mood'] ?? "Neutral",
+      id: map['id'] ?? 0,
+      name: map['first_name'] ?? '',
+      surname: map['last_name'] ?? '',
+      email: map['email'] ?? '',
+      phoneNumber: map['phone_number'] ?? '',
+      dateOfBirth: DateTime.tryParse(map['birth_date'] ?? '') ?? DateTime(2000),
+      appointments: map['appointments'] != null
+          ? List<String>.from(map['appointments'])
+          : [],
+      medications: map['medications'] != null
+          ? List<String>.from(map['medications'])
+          : [],
+      mood: map['mood'] ?? 'Neutral',
       isEmergencyContactNotified: map['isEmergencyContactNotified'] ?? false,
-      emergencyContact: map['emergencyContact'],
-      healthPoints: map['healthPoints'] ?? 0,
-      doctorId: map['doctorId'],
+      emergencyContact: map['emergency_contact'],
+      healthPoints: map['health_points'] ?? 0,
+      doctorId: map['doctor'],
+      username: map['username'] ?? '',
+      password: map['password'] ?? '',
     );
   }
+
 
   @override
   Map<String, dynamic> toMap() {

@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _surnameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _dobController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _specializationController = TextEditingController(); // only for doctor
   final _emergencyContactController = TextEditingController(); // only for patient
 
@@ -34,6 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final surname = _surnameController.text.trim();
     final phone = _phoneController.text.trim();
     final dob = _dobController.text.trim();
+    final username = _usernameController.text.trim();
 
     if (_selectedRole == null ||
         email.isEmpty ||
@@ -42,6 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         surname.isEmpty ||
         phone.isEmpty ||
         dob.isEmpty ||
+        username.isEmpty ||
         (_selectedRole == 'Doctor' && _specializationController.text.trim().isEmpty) ||
         (_selectedRole == 'Paciente' && _emergencyContactController.text.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,20 +56,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       if (_selectedRole == 'Paciente') {
         final response = await http.post(
-          Uri.parse("${baseUrl}patients/"),
+          Uri.parse("${baseUrl}register/patient/"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
-            "name": name,
-            "surname": surname,
+            "username": username,
             "email": email,
-            "phoneNumber": phone,
-            "dateOfBirth": dob,
+            "first_name": name,
+            "last_name": surname,
+            "birth_date": dob,
+            "phone_number": phone,
             "mood": "Neutral",
-            "emergencyContact": _emergencyContactController.text.trim(),
-            "healthPoints": 0,
+            "emergency_contact": _emergencyContactController.text.trim(),
+            "health_points": 0,
             "doctor": null,
+            "password": password
           }),
         );
+
 
         if (response.statusCode == 201 || response.statusCode == 200) {
           final data = jsonDecode(response.body);
@@ -80,16 +86,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       } else if (_selectedRole == 'Doctor') {
         final response = await http.post(
-          Uri.parse("${baseUrl}doctors/"),
+          Uri.parse("${baseUrl}register/doctor/"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
-            "name": name,
-            "surname": surname,
+            "first_name": name,
+            "last_name": surname,
             "email": email,
-            "phoneNumber": phone,
-            "dateOfBirth": dob,
+            "phone_number": phone,
+            "birth_date": dob,
             "specialization": _specializationController.text.trim(),
-            "id" : 0
+            "username": username,
+            "password": password
           }),
         );
 
@@ -101,12 +108,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
             MaterialPageRoute(builder: (_) => DoctorHomeScreen(doctor: doctor)),
           );
         } else {
-          // Imprimir el cuerpo de la respuesta para saber más sobre el error
           print("Error al registrar doctor. Código: ${response.statusCode}");
           print("Respuesta del servidor: ${response.body}");
-          throw Exception('Error al registrar doctor. Código: ${response.statusCode}');
-        }
+          print({
+            "username": username,
+            "password": password,
+            "email": email,
+            "birth_date": dob,
+            "phone_number": phone,
+            "first_name": name,
+            "last_name": surname,
+            "specialization": _specializationController.text.trim()
+          });
 
+          throw Exception('Error al registrar doctor. Código: ${response.statusCode}. Respuesta: ${response.body}');
+
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,6 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             TextField(controller: _nameController, decoration: const InputDecoration(labelText: 'Nombre')),
             TextField(controller: _surnameController, decoration: const InputDecoration(labelText: 'Apellido')),
+            TextField(controller: _usernameController, decoration: const InputDecoration(labelText: 'Nombre de usuario')),
             TextField(controller: _emailController, decoration: const InputDecoration(labelText: 'Correo electrónico')),
             TextField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña')),
             TextField(controller: _phoneController, decoration: const InputDecoration(labelText: 'Teléfono')),

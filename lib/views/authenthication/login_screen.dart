@@ -29,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: "doctor@email.com",
         specialization: "Cardiologist", // Usar 'specialization' en lugar de 'specialty'
         dateOfBirth: DateTime(1980, 5, 15), // Añadir la fecha de nacimiento
+        username: "juand",
+        password: "123456"
       );
 
       Navigator.pushReplacement(
@@ -43,6 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
         surname: "Pérez",
         email: "paciente@email.com",
         dateOfBirth: DateTime(1990, 1, 1), // Añadir la fecha de nacimiento
+        username: "juan1",
+        password: "123456"
       );
 
       Navigator.pushReplacement(

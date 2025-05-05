@@ -14,21 +14,30 @@ class Doctor extends User {
     super.appointments,
     this.patients = const [],
     required this.specialization,
+    required super.username,
+    required super.password
   });
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
     return Doctor(
-      id: map['id'],
-      name: map['name'],
-      surname: map['surname'],
-      email: map['email'],
-      phoneNumber: map['phoneNumber'],
-      dateOfBirth: DateTime.parse(map['dateOfBirth']),
-      appointments: List<String>.from(map['appointments'] ?? []),
-      patients: List<String>.from(map['patients'] ?? []),
-      specialization: map['specialization'],
+      id: map['id'] ?? 0,
+      name: map['first_name'] ?? '', // nombre esperado del backend
+      surname: map['last_name'] ?? '',
+      email: map['email'] ?? '',
+      phoneNumber: map['phone_number'] ?? '',
+      dateOfBirth: DateTime.tryParse(map['birth_date'] ?? '') ?? DateTime(2000),
+      appointments: map['appointments'] != null
+          ? List<String>.from(map['appointments'])
+          : [],
+      patients: map['patients'] != null
+          ? List<String>.from(map['patients'])
+          : [],
+      specialization: map['specialization'] ?? '',
+      username: map['username'] ?? '',
+      password: map['password'] ?? '',
     );
   }
+
 
   @override
   Map<String, dynamic> toMap() {
