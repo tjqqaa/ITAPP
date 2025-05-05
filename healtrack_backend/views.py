@@ -1,4 +1,7 @@
 from django.contrib.auth import authenticate
+from django.db import IntegrityError
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -12,24 +15,46 @@ def test_error(request):
     raise Exception("Testowy wyjątek 500")
 
 
+@extend_schema(
+    responses={
+201: OpenApiResponse(response=PatientRegisterSerializer, description="Patient registered successfully."),
+        400: OpenApiResponse(description="Username already exists")
+    }
+)
 class PatientRegisterView(APIView):
     serializer_class = PatientRegisterSerializer
     def post(self, request):
         serializer = PatientRegisterSerializer(data=request.data)
-        if serializer.is_valid():
+        serializer.is_valid(raise_exception=True)
+        try:
             serializer.save()
-            return Response({"message": "Patient registered successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            raise ValidationError({
+                "error": "Username already exists",
+                "code": "USERNAME_EXISTS"
+            })
+        return Response({"message": "Patient registered successfully"}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    responses={
+        201: OpenApiResponse(response=DoctorRegisterSerializer, description="Doctor registered successfully."),
+        400: OpenApiResponse(description="Username already exists")
+    }
+)
 class DoctorRegisterView(APIView):
     serializer_class = DoctorRegisterSerializer
     def post(self, request):
         serializer = DoctorRegisterSerializer(data=request.data)
-        if serializer.is_valid():
+        serializer.is_valid(raise_exception=True)
+        try:
             serializer.save()
-            return Response({"message": "Doctor registered successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            raise ValidationError({
+                "error": "Username already exists",
+                "code": "USERNAME_EXISTS"
+            })
+        return Response({"message": "Doctor registered successfully"}, status=status.HTTP_201_CREATED)
 
 
 class SimpleLoginView(APIView):
