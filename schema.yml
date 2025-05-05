@@ -121,7 +121,7 @@ paths:
           description: No response body
   /doctors/:
     get:
-      operationId: doctors_list
+      operationId: doctors_retrieve
       tags:
       - doctors
       security:
@@ -133,9 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Doctor'
+                $ref: '#/components/schemas/Doctor'
           description: ''
     post:
       operationId: doctors_create
@@ -158,7 +156,7 @@ paths:
       - basicAuth: []
       - {}
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
@@ -166,7 +164,7 @@ paths:
           description: ''
   /doctors/{id}/:
     get:
-      operationId: doctors_retrieve
+      operationId: doctors_retrieve_2
       parameters:
       - in: path
         name: id
@@ -236,6 +234,78 @@ paths:
       responses:
         '204':
           description: No response body
+  /doctors/{id}/appointments/:
+    get:
+      operationId: doctors_appointments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - doctors
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+  /doctors/{id}/patients/:
+    get:
+      operationId: doctors_patients_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - doctors
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+          description: ''
+  /login/:
+    post:
+      operationId: login_create
+      tags:
+      - login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
   /medications/:
     get:
       operationId: medications_retrieve
@@ -466,6 +536,62 @@ paths:
       responses:
         '204':
           description: No response body
+  /register/doctor/:
+    post:
+      operationId: register_doctor_create
+      tags:
+      - register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoctorRegister'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorRegister'
+          description: ''
+  /register/patient/:
+    post:
+      operationId: register_patient_create
+      tags:
+      - register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatientRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatientRegister'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientRegister'
+          description: ''
 components:
   schemas:
     Appointment:
@@ -504,33 +630,68 @@ components:
         id:
           type: integer
           readOnly: true
-        name:
+        username:
           type: string
-          maxLength: 100
-        surname:
-          type: string
-          maxLength: 100
         email:
           type: string
           format: email
-          maxLength: 254
-        phoneNumber:
+        first_name:
           type: string
-          maxLength: 15
-        dateOfBirth:
+        last_name:
+          type: string
+        birth_date:
           type: string
           format: date
+        phone_number:
+          type: string
+        specialization:
+          type: string
+          maxLength: 100
+        user:
+          type: integer
+      required:
+      - birth_date
+      - email
+      - first_name
+      - id
+      - last_name
+      - phone_number
+      - specialization
+      - user
+      - username
+    DoctorRegister:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+        birth_date:
+          type: string
+          format: date
+        phone_number:
+          type: string
+          maxLength: 15
+        first_name:
+          type: string
+        last_name:
+          type: string
         specialization:
           type: string
           maxLength: 100
       required:
-      - dateOfBirth
+      - birth_date
       - email
-      - id
-      - name
-      - phoneNumber
+      - first_name
+      - last_name
+      - password
+      - phone_number
       - specialization
-      - surname
+      - username
     Medication:
       type: object
       properties:
@@ -556,45 +717,90 @@ components:
         id:
           type: integer
           readOnly: true
-        name:
+        username:
           type: string
-          maxLength: 100
-        surname:
-          type: string
-          maxLength: 100
         email:
           type: string
           format: email
-          maxLength: 254
-        phoneNumber:
+        first_name:
           type: string
-          maxLength: 15
-        dateOfBirth:
+        last_name:
+          type: string
+        birth_date:
           type: string
           format: date
+        phone_number:
+          type: string
         mood:
           type: string
           maxLength: 100
-        emergencyContact:
+        emergency_contact:
           type: string
           maxLength: 15
-        healthPoints:
+        health_points:
           type: integer
           maximum: 2147483647
           minimum: -2147483648
+        user:
+          type: integer
         doctor:
           type: integer
           nullable: true
       required:
-      - dateOfBirth
+      - birth_date
       - email
-      - emergencyContact
-      - healthPoints
+      - emergency_contact
+      - first_name
+      - health_points
       - id
+      - last_name
       - mood
-      - name
-      - phoneNumber
-      - surname
+      - phone_number
+      - user
+      - username
+    PatientRegister:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+        birth_date:
+          type: string
+          format: date
+        phone_number:
+          type: string
+          maxLength: 15
+        first_name:
+          type: string
+        last_name:
+          type: string
+        mood:
+          type: string
+          maxLength: 100
+        emergency_contact:
+          type: string
+          maxLength: 15
+        health_points:
+          type: integer
+        doctor:
+          type: integer
+          nullable: true
+      required:
+      - birth_date
+      - email
+      - emergency_contact
+      - first_name
+      - health_points
+      - last_name
+      - mood
+      - password
+      - phone_number
+      - username
     StateEnum:
       enum:
       - pending
@@ -615,6 +821,21 @@ components:
       description: |-
         * `inPerson` - In Person
         * `online` - Online
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          maxLength: 128
+      required:
+      - password
+      - username
   securitySchemes:
     basicAuth:
       type: http

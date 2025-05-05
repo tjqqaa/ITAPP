@@ -1,10 +1,11 @@
 from django.contrib import admin
+from django.contrib.auth.views import LoginView
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from healtrack_backend.views import DoctorListCreateView, MedicationListCreateView, \
     PatientListCreateView, AppointmentListCreateView, DoctorDetailView, PatientDetailView, AppointmentDetailView, \
-    MedicationDetailView, AppointmentsById, PatientsById
+    MedicationDetailView, AppointmentsById, PatientsById, PatientRegisterView, SimpleLoginView, DoctorRegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,6 +19,10 @@ urlpatterns = [
     path('patients/<int:pk>/', PatientDetailView.as_view()),
     path('appointments/<int:pk>/', AppointmentDetailView.as_view()),
     path('medications/<int:pk>/', MedicationDetailView.as_view()),
+
+    path('register/patient/', PatientRegisterView.as_view()),
+    path('register/doctor/', DoctorRegisterView.as_view()),
+    path('login/', SimpleLoginView.as_view()),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:

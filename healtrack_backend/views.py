@@ -1,14 +1,48 @@
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from healtrack_backend.models import Doctor, Patient, Appointment, Medication
-from healtrack_backend.serializers import DoctorSerializer, PatientSerializer, AppointmentSerializer, \
-    MedicationSerializer
+from healtrack_backend.serializers import DoctorSerializer, PatientRegisterSerializer, AppointmentSerializer, \
+    MedicationSerializer, PatientSerializer, DoctorRegisterSerializer, UserSerializer
 from rest_framework.generics import ListAPIView
 
 
 def test_error(request):
     raise Exception("Testowy wyjątek 500")
+
+
+class PatientRegisterView(APIView):
+    serializer_class = PatientRegisterSerializer
+    def post(self, request):
+        serializer = PatientRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Patient registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DoctorRegisterView(APIView):
+    serializer_class = DoctorRegisterSerializer
+    def post(self, request):
+        serializer = DoctorRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Doctor registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SimpleLoginView(APIView):
+    serializer_class = UserSerializer
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            return Response({"message": "Logged in successfully"}, status=status.HTTP_200_OK)
+        return Response({"error": "Incorrect username or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class DoctorListCreateView(APIView):

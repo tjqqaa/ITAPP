@@ -15,28 +15,28 @@ from django.db.models import OneToOneField
 
 
 class CustomUser(AbstractUser):
-    phoneNumber = models.CharField(max_length=15)
-    dateOfBirth = models.DateField()
+    phone_number = models.CharField(max_length=15)
+    birth_date = models.DateField()
 
 
 class Doctor(models.Model):
     user = OneToOneField(CustomUser, on_delete=models.CASCADE)
     specialization = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.name} {self.surname} ({self.specialization})"
+    # def __str__(self):
+    #     return f"{self.name} {self.surname} ({self.specialization})"
 
 class Patient(models.Model):
     user = OneToOneField(CustomUser, on_delete=models.CASCADE)
     mood = models.CharField(max_length=100)
-    emergencyContact = models.CharField(max_length=15)
-    healthPoints = models.IntegerField()
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='patients')
+    emergency_contact = models.CharField(max_length=15)
+    health_points = models.IntegerField()
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True, related_name='patients')
 
-    def __str__(self):
-        if self.doctor:
-            return f"{self.name} {self.surname} (Patient of {self.doctor.name})"
-        return (f"{self.name} {self.surname} (No doctor assigned)")
+    # def __str__(self):
+    #     if self.doctor:
+    #         return f"{self.first_name} {self.last} (Patient of {self.doctor.name})"
+    #     return (f"{self.name} {self.surname} (No doctor assigned)")
 
 class Medication(models.Model):
     name = models.CharField(max_length=100)
