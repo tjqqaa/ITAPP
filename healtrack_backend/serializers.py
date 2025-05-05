@@ -113,7 +113,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        fields = '__all__'
+        exclude = ['user']
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -126,7 +126,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = '__all__'
+        exclude = ['user']
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
