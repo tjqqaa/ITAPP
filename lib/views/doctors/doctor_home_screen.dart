@@ -50,7 +50,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.person_search,
-                label: 'Mis Pacientes',
+                label: 'My Patients',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -61,7 +61,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.calendar_today,
-                label: 'Citas',
+                label: 'Appointments',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -72,7 +72,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               buildCustomButton(
                 context: context,
                 icon: Icons.description,
-                label: 'Prescripciones',
+                label: 'Prescriptions',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -80,14 +80,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                   );
                 },
               ),
-              buildCustomButton(
-                context: context,
-                icon: Icons.settings,
-                label: 'Ajustes',
-                onTap: () {
-                  // Acción para ajustes
-                },
-              ),
+
             ],
           ),
         ),
@@ -99,8 +92,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

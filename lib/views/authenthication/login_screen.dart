@@ -38,36 +38,60 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': password,
         }),
       );
+      final data = jsonDecode(response.body);
+      print("Login response: $data");
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print("Login response: $data");
+      final role = data['role'];
+      final id = data['id'];
 
-        final role = data['role'];
-        final userData = data['user']; // Suponiendo que los datos del usuario vienen aquí
-        print(role);
-        if (role == 'doctor' && userData != null) {
-          final doctor = Doctor.fromJson(userData);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: doctor)),
+      if (role != null && id != null) {
+        if (role == 'doctor') {
+          final doctorResponse = await http.get(
+            Uri.parse('https://healtrack-app-backend.azurewebsites.net/doctors/$id'),
           );
-        } else if (role == 'patient' && userData != null) {
-          final patient = Patient.fromJson(userData);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: patient)),
+
+          if (doctorResponse.statusCode == 200) {
+            final doctorData = jsonDecode(doctorResponse.body);
+            final doctor = Doctor.fromJson(doctorData);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: doctor)),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al obtener datos del doctor')),
+            );
+          }
+
+        } else if (role == 'patient') {
+          final patientResponse = await http.get(
+            Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/$id'),
           );
+
+          if (patientResponse.statusCode == 200) {
+            final patientData = jsonDecode(patientResponse.body);
+            final patient = Patient.fromJson(patientData);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: patient)),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al obtener datos del paciente')),
+            );
+          }
+
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tipo de usuario no reconocido o datos incompletos')),
+            const SnackBar(content: Text('Rol de usuario no reconocido')),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Credenciales incorrectas')),
+          const SnackBar(content: Text('Credenciales incorrectas o datos incompletos')),
         );
       }
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error al conectar con el servidor')),
@@ -97,14 +121,14 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Bienvenido a HealTrack",
+                "Welcome to HealTrack",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: "Correo electrónico",
+                  labelText: "Username",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -113,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: "Contraseña",
+                  labelText: "Password",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -122,12 +146,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _isLoading ? null : _login, // Deshabilitar si está cargando
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Iniciar sesión"),
+                    : const Text("Log in"),
               ),
               const SizedBox(height: 10),
               TextButton(
                 onPressed: _navigateToSignUp,
-                child: const Text("¿No tienes cuenta? Regístrate"),
+                child: const Text("¿No account? Sign up"),
               ),
             ],
           ),
