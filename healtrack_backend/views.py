@@ -166,7 +166,7 @@ class PatientDetailView(APIView):
 
     def put(self, request, pk):
         patient = Patient.objects.get(pk=pk)
-        serializer = PatientSerializer(patient, data=request.data)
+        serializer = PatientRegisterSerializer(patient, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

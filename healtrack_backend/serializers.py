@@ -54,6 +54,26 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
         patient = Patient.objects.create(user=user, doctor=doctor, **validated_data)
         return patient
 
+    def update(self, instance, validated_data):
+        # Update user data
+        user = instance.user
+        user.username = validated_data.get('username', user.username)
+        user.email = validated_data.get('email', user.email)
+        user.first_name = validated_data.get('first_name', user.first_name)
+        user.last_name = validated_data.get('last_name', user.last_name)
+        user.birth_date = validated_data.get('birth_date', user.birth_date)
+        user.phone_number = validated_data.get('phone_number', user.phone_number)
+        user.save()
+
+        # Update patient fields
+        instance.mood = validated_data.get('mood', instance.mood)
+        instance.emergency_contact = validated_data.get('emergency_contact', instance.emergency_contact)
+        instance.health_points = validated_data.get('health_points', instance.health_points)
+        instance.doctor = validated_data.get('doctor', instance.doctor)
+        instance.save()
+
+        return instance
+
 
 class DoctorRegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
@@ -93,6 +113,7 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
 
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
+
 
 
 class UserSerializer(serializers.ModelSerializer):
