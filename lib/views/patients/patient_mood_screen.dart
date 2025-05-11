@@ -18,13 +18,20 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
   bool _isLoading = false;
 
   final List<String> _moodOptions = [
-    'Feliz',
-    'Triste',
-    'Enojado',
-    'Cansado',
-    'Ansioso',
-    'Neutral'
+    'Happy',
+    'Sad',
+    'Angry',
+    'Tired',
+    'Anxious',
+    'Neutral',
+    'Hopeless',
+    'Overwhelmed',
+    'Depressed',
+    'Numb',
+    'Panicked',
+    'Suicidal'
   ];
+
 
   @override
   void initState() {
@@ -53,7 +60,7 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
       password: widget.patient.password
     );
 
-    final updatedPatientMap = updatedPatient.toApiMap();
+    final updatedPatientMap = updatedPatient.toApiMapMood();
     print(updatedPatientMap);
     print(widget.patient.id);
     final response = await http.put(
@@ -61,16 +68,18 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(updatedPatientMap),
     );
+    print('Status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
     setState(() {
       _isLoading = false;
     });
-
+    print(response.statusCode);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(response.statusCode == 200
-            ? 'Estado de ánimo actualizado.'
-            : 'Error al actualizar estado de ánimo.'),
+            ? 'Mood updated'
+            : 'Error to update your mood'),
       ),
     );
   }

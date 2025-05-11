@@ -67,19 +67,12 @@ class Patient extends User {
 
 
 
-  Map<String, dynamic> toApiMap() {
+  Map<String, dynamic> toApiMapMood() {
     return {
-      'username': username,
-      'password': password,
-      'email': email,
-      'birth_date': dateOfBirth.toIso8601String(),
-      'phone_number': phoneNumber,
-      'first_name': name,
-      'last_name': surname,
+      'id' : id,
       'mood': mood,
       'emergency_contact': emergencyContact,
       'health_points': healthPoints,
-      'doctor': doctorId,
     };
   }
 
