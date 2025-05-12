@@ -10,6 +10,7 @@ import 'package:project/views/patients/contact_doctor_screen.dart';
 import 'package:project/views/patients/prescriptions_screen.dart';
 import 'package:project/views/patients/patient_mood_screen.dart';
 import 'package:project/views/patients/emergency_screen.dart';
+import 'package:project/views/patients/select_doctor_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -163,6 +164,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   );
                 },
               ),
+              buildCustomButton(
+                context: context,
+                icon: Icons.person_add,
+                label: 'Select Doctor',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SelectDoctorScreen(patient: widget.patient),
+                    ),
+                  );
+                },
+              ),
+
 
             ],
           ),

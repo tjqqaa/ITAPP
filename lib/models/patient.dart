@@ -76,6 +76,50 @@ class Patient extends User {
     };
   }
 
+  Map<String, dynamic> toApiMapSelDoctor() {
+    return {
+      'id' : id,
+      'doctor': doctorId,
+      'emergency_contact': emergencyContact,
+      'health_points': healthPoints,
+      'mood': mood,
+    };
+  }
+  Patient copyWith({
+    int? id,
+    String? name,
+    String? surname,
+    String? email,
+    String? phoneNumber,
+    DateTime? dateOfBirth,
+    List<String>? appointments,
+    List<String>? medications,
+    String? mood,
+    bool? isEmergencyContactNotified,
+    String? emergencyContact,
+    int? healthPoints,
+    int? doctorId,
+    String? username,
+    String? password,
+  }) {
+    return Patient(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      surname: surname ?? this.surname,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      appointments: appointments ?? this.appointments,
+      medications: medications ?? this.medications,
+      mood: mood ?? this.mood,
+      isEmergencyContactNotified: isEmergencyContactNotified ?? this.isEmergencyContactNotified,
+      emergencyContact: emergencyContact ?? this.emergencyContact,
+      healthPoints: healthPoints ?? this.healthPoints,
+      doctorId: doctorId ?? this.doctorId,
+      username: username ?? this.username,
+      password: password ?? this.password,
+    );
+  }
 
 
 

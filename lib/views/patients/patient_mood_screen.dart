@@ -61,20 +61,17 @@ class _PatientMoodScreenState extends State<PatientMoodScreen> {
     );
 
     final updatedPatientMap = updatedPatient.toApiMapMood();
-    print(updatedPatientMap);
-    print(widget.patient.id);
+
     final response = await http.put(
       Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/${widget.patient.id}/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(updatedPatientMap),
     );
-    print('Status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+
 
     setState(() {
       _isLoading = false;
     });
-    print(response.statusCode);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(response.statusCode == 200

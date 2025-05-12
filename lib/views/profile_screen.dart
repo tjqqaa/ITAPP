@@ -35,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/$id/'),
         headers: {'Content-Type': 'application/json'},
       );
-      print("User ID: ${widget.user.id}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
