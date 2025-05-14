@@ -9,7 +9,7 @@ import 'package:project/views/doctors/doctor_home_screen.dart';
 import 'package:project/views/authenthication/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final dynamic user; // Puede ser tanto Patient como Doctor
+  final dynamic user;
 
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
@@ -21,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _selectedIndex = 1;
   bool _isLoading = true;
   Patient? _fetchedUser;
+  Doctor? _assignedDoctor;
 
   @override
   void initState() {
@@ -38,20 +39,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        final fetchedUser = Patient.fromJson(data);
+
         setState(() {
-          _fetchedUser = Patient.fromJson(data);
+          _fetchedUser = fetchedUser;
           _isLoading = false;
         });
+
+        if (fetchedUser.doctorId != null) {
+          final doctorResponse = await http.get(
+            Uri.parse('https://healtrack-app-backend.azurewebsites.net/doctors/${fetchedUser.doctorId}/'),
+            headers: {'Content-Type': 'application/json'},
+          );
+
+          if (doctorResponse.statusCode == 200) {
+            final doctorData = jsonDecode(doctorResponse.body);
+            setState(() {
+              _assignedDoctor = Doctor.fromJson(doctorData);
+            });
+          }
+        }
       } else {
-        // Manejo de errores si el backend no responde correctamente
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al obtener el perfil')),
+          const SnackBar(content: Text('Error al obtener el perfil')),
         );
       }
-    } else {
-      // Si es Doctor, no hacemos GET aquí (extender si es necesario)
-      setState(() => _isLoading = false);
+    } else if (widget.user is Doctor) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -73,13 +90,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading || _fetchedUser == null) {
+    if (_isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final user = _fetchedUser!;
+    final isPatient = widget.user is Patient;
+    final user = widget.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -91,27 +109,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(user),
+            if (isPatient)
+              _buildProfileHeader(_fetchedUser!)
+            else
+              _buildDoctorHeader(user as Doctor),
             const SizedBox(height: 20),
+            _buildProfileDetail('Email', user.email),
             _buildProfileDetail('Phone Number', user.phoneNumber ?? 'Not provided'),
-            _buildProfileDetail('Date of Birth', user.dateOfBirth.toString()),
-            const SizedBox(height: 20),
-            _buildSectionTitle('Medications'),
-            user.medications.isEmpty
-                ? const Text('No medications registered.')
-                : Text(user.medications.join(', ')),
-            const SizedBox(height: 20),
-            _buildSectionTitle('Appointments'),
-            const Text('No appointments scheduled.'), // TODO: agregar lógica real
-            const SizedBox(height: 20),
-            _buildProfileDetail('Mood', user.mood ?? 'Not specified'),
-            _buildProfileDetail('Emergency Contact', user.emergencyContact ?? 'Not provided'),
-            _buildProfileDetail('Health Points', user.healthPoints.toString()),
+            if (isPatient) ...[
+              _buildProfileDetail('Date of Birth', _fetchedUser!.dateOfBirth.toString()),
+              _buildSectionTitle('Medications'),
+              _fetchedUser!.medications.isEmpty
+                  ? const Text('No medications registered.')
+                  : Text(_fetchedUser!.medications.join(', ')),
+              const SizedBox(height: 20),
+              _buildSectionTitle('Appointments'),
+              const Text('No appointments scheduled.'),
+              const SizedBox(height: 20),
+              _buildProfileDetail('Mood', _fetchedUser!.mood ?? 'Not specified'),
+              _buildProfileDetail('Emergency Contact', _fetchedUser!.emergencyContact ?? 'Not provided'),
+              _buildProfileDetail('Health Points', _fetchedUser!.healthPoints.toString()),
+              const SizedBox(height: 20),
+              _buildSectionTitle('Assigned Doctor'),
+              if (_assignedDoctor != null) ...[
+                _buildProfileDetail('Name', '${_assignedDoctor!.name} ${_assignedDoctor!.surname}'),
+                _buildProfileDetail('Email', _assignedDoctor!.email),
+                _buildProfileDetail('Specialization', _assignedDoctor!.specialization),
+              ] else ...[
+                const Text('No doctor assigned.'),
+                const Divider(),
+              ],
+            ] else ...[
+              _buildProfileDetail('Specialization', (user as Doctor).specialization),
+            ],
             const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navegar a pantalla de edición si se implementa
+                  // Navegar a pantalla de edición
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
@@ -183,6 +218,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(user.surname),
               ],
             ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDoctorHeader(Doctor user) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 40,
+          backgroundColor: Colors.grey[300],
+          child: const Icon(Icons.person, size: 40, color: Colors.white),
+        ),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${user.name}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('Surname: ${user.surname}', style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ],
