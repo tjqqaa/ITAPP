@@ -4,6 +4,7 @@ import 'package:project/others/custom_button.dart';
 import 'package:project/views/doctors/doctor_appointments_home_screen.dart';
 import 'package:project/views/doctors/doctor_patients_screen.dart';
 import 'package:project/views/doctors/doctor_preinscriptions_screen.dart';
+import 'package:project/views/doctors/doctor_doses.dart';
 import 'package:project/views/profile_screen.dart';
 
 
@@ -78,6 +79,18 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => DoctorPreinscriptionsScreen(doctor: widget.doctor)),
+                  );
+                },
+              ),
+
+              buildCustomButton(
+                context: context,
+                icon: Icons.description,
+                label: 'Doses',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DoctorDosesScreen(doctor: widget.doctor)),
                   );
                 },
               ),
