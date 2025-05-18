@@ -19,26 +19,7 @@ class DoctorDosesScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Manage Medications 💊',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold), // Usamos titleLarge en lugar de headline6
-            ),
-            const SizedBox(height: 16),
-            buildCustomButton(
-              context: context,
-              icon: Icons.add,
-              label: 'Add New Prescription ➕',
-              onTap: () {
-                // Navigate to Add Prescription screen
-              },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Current Prescriptions 📜',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold), // Usamos titleLarge en lugar de headline6
-            ),
-            const SizedBox(height: 8),
-            // Asumiendo que se mostrará una lista de prescripciones
+            // List of current medications/doses
             Expanded(
               child: ListView(
                 children: [
@@ -66,8 +47,30 @@ class DoctorDosesScreen extends StatelessWidget {
                     emoji: '🌡️',
                     context: context,
                   ),
-                  // Agrega más prescripciones según sea necesario
+                  // Add more medications as needed
                 ],
+              ),
+            ),
+            // The "Add Dose" button is now smaller and at the bottom
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 200, // Making the button smaller
+                      child: buildCustomButton(
+                        context: context,
+                        icon: Icons.add,
+                        label: 'Add Dose', // Button label
+                        onTap: () {
+                          // Navigate to Add Dose screen
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -76,14 +79,14 @@ class DoctorDosesScreen extends StatelessWidget {
     );
   }
 
-  // Método de ayuda para construir los tiles de medicamentos
+  // Helper method to build medication tiles
   Widget _buildMedicationTile({
     required String name,
     required String dosage,
     required String frequency,
     required String instructions,
     required String emoji,
-    required BuildContext context, // Aseguramos que 'context' sea pasado correctamente
+    required BuildContext context,
   }) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -105,7 +108,7 @@ class DoctorDosesScreen extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {
-            // Editar medicación
+            // Edit medication dose
           },
         ),
       ),
