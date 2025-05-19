@@ -278,5 +278,11 @@ class PatientsById(APIView):
         serializer = PatientSerializer(patients, many=True)
         return Response(serializer.data)
 
+class MedicationsByPatientId(APIView):
+    serializer_class = MedicationSerializer
 
+    def get(self, request, pk):
+        medications = Medication.objects.filter(patient=pk)
+        serializer = MedicationSerializer(medications, many=True)
+        return Response(serializer.data)
 
