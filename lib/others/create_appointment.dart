@@ -10,7 +10,7 @@ Future<void> createAppointment({
   required int patientId,
   required int doctorId,
 }) async {
-  final url = Uri.parse('https://healtrack-app-backend.azurewebsites.net/api/appointments');
+  final url = Uri.parse('https://healtrack-app-backend.azurewebsites.net/appointments/');
 
   final response = await http.post(
     url,
@@ -25,4 +25,12 @@ Future<void> createAppointment({
       'doctor': doctorId,
     }),
   );
+
+  if (response.statusCode == 201) {
+    print('Cita creada correctamente');
+  } else {
+    print('Error al crear la cita: ${response.statusCode}');
+    print('Cuerpo de la respuesta: ${response.body}');
+    throw Exception('No se pudo crear la cita');
+  }
 }

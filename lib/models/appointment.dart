@@ -11,9 +11,9 @@ enum AppointmentType {
 }
 
 class Appointment {
-  String id;
-  String userId;
-  String doctorId;
+  int id;
+  int userId;
+  int doctorId;
   DateTime appointmentDate;
   String reason;
   String? ubication;
@@ -41,11 +41,11 @@ class Appointment {
   factory Appointment.fromMap(Map<String, dynamic> map) {
     return Appointment(
       id: map['id'],
-      userId: map['userId'],
-      doctorId: map['doctorId'],
-      appointmentDate: DateTime.parse(map['appointmentDate']),
+      userId: map['patient'],
+      doctorId: map['doctor'],
+      appointmentDate: DateTime.parse(map['appointment_date']),
       reason: map['reason'],
-      ubication: map['ubication'] ?? "",
+      ubication: map['location'] ?? "",
       type: AppointmentType.values.firstWhere(
         (e) => e.name == map['type'], //we cast the Strings from the database into AppointmentType type values
         orElse: () => AppointmentType.inPerson //if no correct value is found we put the in-person type
