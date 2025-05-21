@@ -8,7 +8,7 @@ Future<void> createAppointment({
   required String type,
   required String state,
   required int patientId,
-  required int doctorId,
+  required int? doctorId,
 }) async {
   final url = Uri.parse('https://healtrack-app-backend.azurewebsites.net/appointments/');
 

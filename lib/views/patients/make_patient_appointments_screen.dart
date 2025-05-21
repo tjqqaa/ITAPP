@@ -1,139 +1,212 @@
 import 'package:flutter/material.dart';
-import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
+import 'package:project/models/doctor.dart';
 import 'package:project/models/patient.dart';
-
+import 'package:project/others/create_appointment.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MakePatientAppointmentsScreen extends StatefulWidget {
   final Patient patient;
-  
-  const MakePatientAppointmentsScreen({super.key, required this.patient});
+
+  const MakePatientAppointmentsScreen({
+    super.key,
+    required this.patient,
+  });
 
   @override
-  State<MakePatientAppointmentsScreen> createState() => _MakeAppointmentsPatientScreen();
+  State<MakePatientAppointmentsScreen> createState() => _MakePatientAppointmentsScreenState();
 }
 
-// Enum to represent the navigation bar options
-enum NavigationTab { home, medicines, profile }
+class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _reasonController = TextEditingController();
+  final _locationController = TextEditingController();
 
-//Enum to represent the accessible screens for making and seeing appointments
-enum AppointmentScreens {makeAppointment, showAppointments}
+  late Future<Doctor?>? _doctor;
 
-class _MakeAppointmentsPatientScreen extends State<MakePatientAppointmentsScreen>{
-  // El estado guardará la pestaña seleccionada directamente usando el enum
-  NavigationTab _selectedTab = NavigationTab.home;
+  DateTime _selectedDate = DateTime.now();
+  String _type = 'inPerson';
+  bool _isSubmitting = false;
 
-  ///Method that lets us perform actions, like changing to another screen, when an item is tapped 
-  ///by the user
-  void _onNavigationItemTapped(int index) {
+  Future<void> _pickDateTime() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
 
-    setState(() {
-      _selectedTab = NavigationTab.values[index];
-    });
+    if (picked != null) {
+      final TimeOfDay? time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(_selectedDate),
+      );
 
-    // Use a `switch` to navigate based on the selected tab
-    switch (_selectedTab) {
-      case NavigationTab.home:
-        // We are already in home tab
-        break;
-      case NavigationTab.medicines:
-        // Acción para Medicines
-        break;
-      case NavigationTab.profile:
+      if (time != null) {
+        setState(() {
+          _selectedDate = DateTime(
+              picked.year, picked.month, picked.day, time.hour, time.minute);
+        });
+      }
+    }
+  }
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(user: 'user')), // You need to pass the user object
+  Future<Doctor> fetchDoctor(int doctorId) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://healtrack-app-backend.azurewebsites.net/doctors/$doctorId/'),
+      headers: {
+        'accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      dynamic data = json.decode(response.body);
+      return Doctor.fromMap(data);
+    } else {
+      throw Exception('Failed to load doctor');
+    }
+  }
+
+  void _submit() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isSubmitting = true);
+
+      try {
+        await createAppointment(
+          appointmentDate: _selectedDate,
+          reason: _reasonController.text,
+          location: _locationController.text,
+          type: _type,
+          state: 'pending',
+          // estado fijo
+          patientId: widget.patient.id,
+          doctorId: widget.patient.doctorId,
         );
-        break;
-    }
-  }
-  
-  ///Method that lets us access the "Make an appointment" and "See appointments" screens
-  void _onItemTapped(AppointmentScreens screen) {
-    AppointmentScreens selectedScreen = screen;
-      // Usamos un `switch` para navegar según la pestaña seleccionada
-    switch (selectedScreen) {
-      case AppointmentScreens.makeAppointment:
-        //
-        break;
-      case AppointmentScreens.showAppointments:
-        //Nos cambiamos a la pantalla de show appointments
-        break;
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cita creada')));
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')));
+      } finally {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.patient.doctorId != null) {
+      _doctor = fetchDoctor(widget.patient.doctorId!);
+    } else {
+      _doctor = null; // No intentamos fetch
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCustomButton(
-                  key: const ValueKey('make_appointment_button'),
-                  icon: Icons.event_available,
-                  label: 'Make an appointment',
-                  onTap: () => _onItemTapped(AppointmentScreens.makeAppointment),
-                ),
-                _buildCustomButton(
-                  key: const ValueKey('see_appointments_button'),
-                  icon: Icons.calendar_month,
-                  label: 'Show appointents',
-                  onTap: () => _onItemTapped(AppointmentScreens.showAppointments),
-                ),
-              ],
+    // Verificamos si el paciente tiene un doctor asignado
+    if (widget.patient.doctorId == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Nueva Cita')),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'No puedes pedir citas porque aún no tienes un doctor asignado.',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        // Usamos el índice del enum para seleccionar la pestaña activa
-        currentIndex: NavigationTab.values.indexOf(_selectedTab),
-        onTap: _onNavigationItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: 'Medicines'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCustomButton({
-    Key? key,
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          key: key,
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 30),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        ),
+      );
+    }
+
+    // Si tiene doctor, mostramos el formulario completo
+    return Scaffold(
+      appBar: AppBar(title: const Text('Nueva Cita')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
             children: [
-              Icon(icon, size: 50),
-              const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontSize: 18)),
+              Text(
+                'Paciente: ${widget.patient.name}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+
+              FutureBuilder<Doctor?>(
+                future: _doctor,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text('Cargando doctor...');
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    final doctor = snapshot.data!;
+                    return Text(
+                      'Doctor: Dr. ${doctor.name} ${doctor.surname}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    );
+                  } else {
+                    return const Text('No se pudo cargar el doctor');
+                  }
+                },
+              ),
+
+              const SizedBox(height: 16),
+
+              TextFormField(
+                controller: _reasonController,
+                decoration: const InputDecoration(labelText: 'Motivo'),
+                validator: (value) =>
+                value!.isEmpty
+                    ? 'Ingrese un motivo'
+                    : null,
+              ),
+              TextFormField(
+                controller: _locationController,
+                decoration: const InputDecoration(labelText: 'Ubicación'),
+                validator: (value) =>
+                value!.isEmpty
+                    ? 'Ingrese ubicación'
+                    : null,
+              ),
+
+              const SizedBox(height: 16),
+              ListTile(
+                title: const Text('Fecha y hora'),
+                subtitle: Text(_selectedDate.toString()),
+                trailing: const Icon(Icons.calendar_today),
+                onTap: _pickDateTime,
+              ),
+
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _type,
+                items: const [
+                  DropdownMenuItem(
+                      value: 'inPerson', child: Text('Presencial')),
+                  DropdownMenuItem(value: 'online', child: Text('Online')),
+                ],
+                onChanged: (val) => setState(() => _type = val!),
+                decoration: const InputDecoration(labelText: 'Tipo de cita'),
+              ),
+
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _isSubmitting ? null : _submit,
+                child: _isSubmitting
+                    ? const CircularProgressIndicator()
+                    : const Text('Crear cita'),
+              ),
             ],
           ),
         ),

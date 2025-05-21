@@ -44,7 +44,7 @@ class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(user: 'user')), // You need to pass the user object
+          MaterialPageRoute(builder: (context) => ProfileScreen(user: widget.patient)),
         );
         break;
     }
