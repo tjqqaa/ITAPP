@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/others/custom_button.dart';
+import 'package:project/views/patients/patient_show_appointments_screen.dart';
 import 'package:project/views/profile_screen.dart'; // Import the ProfileScreen
 import 'package:project/models/patient.dart';
 import 'package:project/views/patients/make_patient_appointments_screen.dart';
@@ -66,7 +67,7 @@ class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
         //Nos cambiamos a la pantalla de show appointments
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MakePatientAppointmentsScreen(patient: widget.patient)), // You need to pass the user object
+          MaterialPageRoute(builder: (context) => PatientShowAppointmentsScreen(patient: widget.patient)), // You need to pass the user object
         );
     }
   }
