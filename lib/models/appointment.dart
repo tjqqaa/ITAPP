@@ -12,7 +12,7 @@ enum AppointmentType {
 
 class Appointment {
   int id;
-  int userId;
+  int patientId;
   int doctorId;
   DateTime appointmentDate;
   String reason;
@@ -20,14 +20,14 @@ class Appointment {
   AppointmentType type;
   AppointmentState state;
 
-  Appointment({required this.id, required this.userId, required this.doctorId, required this.appointmentDate, 
+  Appointment({required this.id, required this.patientId, required this.doctorId, required this.appointmentDate,
   required this.reason, this.ubication, required this.type, required this.state});
 
   /// Método para convertir el modelo a un mapa (útil para Firebase o almacenamiento local)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'userId': userId,
+      'patientId': patientId,
       'doctorId': doctorId,
       'appointmentDate': appointmentDate.toIso8601String(),
       'reason': reason,
@@ -41,7 +41,7 @@ class Appointment {
   factory Appointment.fromMap(Map<String, dynamic> map) {
     return Appointment(
       id: map['id'],
-      userId: map['patient'],
+      patientId: map['patient'],
       doctorId: map['doctor'],
       appointmentDate: DateTime.parse(map['appointment_date']),
       reason: map['reason'],

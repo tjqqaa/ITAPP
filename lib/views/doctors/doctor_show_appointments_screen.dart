@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:project/models/doctor.dart';
-import 'package:project/models/appointment.dart'; // Asegúrate de que tu clase Appointment esté aquí.
+import 'package:project/models/appointment.dart';
+import 'package:intl/intl.dart';
+
+import '../../models/patient.dart';
 
 class DoctorShowAppointmentsScreen extends StatefulWidget {
   final Doctor doctor;
@@ -38,6 +41,22 @@ class _DoctorShowAppointmentsScreenState extends State<DoctorShowAppointmentsScr
     }
   }
 
+
+  Future<Patient> fetchPatient(int patientId) async {
+    final response = await http.get(
+      Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/$patientId'),
+      headers: {'accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return Patient.fromMap(data);
+    } else {
+      throw Exception('Failed to load patient');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,11 +79,26 @@ class _DoctorShowAppointmentsScreenState extends State<DoctorShowAppointmentsScr
               itemCount: appointments.length,
               itemBuilder: (context, index) {
                 final appointment = appointments[index];
-                return ListTile(
-                  title: Text('Cita: ${appointment.appointmentDate}'),
-                  subtitle: Text('Razón: ${appointment.reason}\nUbicación: ${appointment.ubication ?? "No disponible"}'),
-                  trailing: Text('Estado: ${appointment.state.name}'),
+                return FutureBuilder<Patient>(
+                  future: fetchPatient(appointment.patientId),
+                  builder: (context, patientSnapshot) {
+                    if (patientSnapshot.connectionState == ConnectionState.waiting) {
+                      return const ListTile(title: Text('Cargando paciente...'));
+                    } else if (patientSnapshot.hasError) {
+                      return ListTile(title: Text('Error al cargar paciente'));
+                    } else {
+                      final patient = patientSnapshot.data!;
+                      String date = DateFormat('yyyy-MM-dd HH:mm').format(appointment.appointmentDate);
+                      return ListTile(
+                        title: Text('Paciente: ${patient.name} ${patient.surname}'),
+                        subtitle: Text('Razón: ${appointment.reason}\nUbicación: ${appointment.ubication ?? "No disponible"}'),
+                        trailing: Text('Fecha: $date'),
+                      );
+                    }
+                  },
                 );
+
+
               },
             );
           }

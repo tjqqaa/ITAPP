@@ -64,7 +64,10 @@ class _AppointmentsPatientScreenState extends State<AppointmentsPatientScreen>{
         break;
       case AppointmentScreens.showAppointments:
         //Nos cambiamos a la pantalla de show appointments
-        break;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MakePatientAppointmentsScreen(patient: widget.patient)), // You need to pass the user object
+        );
     }
   }
 
