@@ -59,50 +59,73 @@ class _DoctorShowAppointmentsScreenState extends State<DoctorShowAppointmentsScr
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Appointments del Doctor'),
-      ),
-      body: FutureBuilder<List<Appointment>>(
-        future: _appointments,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator()); // Mostramos el loading mientras se espera la respuesta.
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay citas disponibles.'));
-          } else {
-            final appointments = snapshot.data!;
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Appointments del Doctor'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Activas'),
+              Tab(text: 'Vencidas'),
+            ],
+          ),
+        ),
+        body: FutureBuilder<List<Appointment>>(
+          future: _appointments,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No hay citas disponibles.'));
+            } else {
+              final now = DateTime.now();
+              final appointments = snapshot.data!;
 
-            return ListView.builder(
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = appointments[index];
-                return FutureBuilder<Patient>(
-                  future: fetchPatient(appointment.patientId),
-                  builder: (context, patientSnapshot) {
-                    if (patientSnapshot.connectionState == ConnectionState.waiting) {
-                      return const ListTile(title: Text('Cargando paciente...'));
-                    } else if (patientSnapshot.hasError) {
-                      return ListTile(title: Text('Error al cargar paciente'));
-                    } else {
-                      final patient = patientSnapshot.data!;
-                      String date = DateFormat('yyyy-MM-dd HH:mm').format(appointment.appointmentDate);
-                      return ListTile(
-                        title: Text('Paciente: ${patient.name} ${patient.surname}'),
-                        subtitle: Text('Razón: ${appointment.reason}\nUbicación: ${appointment.ubication ?? "No disponible"}'),
-                        trailing: Text('Fecha: $date'),
-                      );
-                    }
+              appointments.sort((a, b) => a.appointmentDate.compareTo(b.appointmentDate));
+
+              // Separar las citas
+              final activeAppointments = appointments.where((a) => a.appointmentDate.isAfter(now)).toList();
+              final expiredAppointments = appointments.where((a) => a.appointmentDate.isBefore(now)).toList();
+
+              Widget buildAppointmentList(List<Appointment> appointmentsList) {
+                return ListView.builder(
+                  itemCount: appointmentsList.length,
+                  itemBuilder: (context, index) {
+                    final appointment = appointmentsList[index];
+                    return FutureBuilder<Patient>(
+                      future: fetchPatient(appointment.patientId),
+                      builder: (context, patientSnapshot) {
+                        if (patientSnapshot.connectionState == ConnectionState.waiting) {
+                          return const ListTile(title: Text('Cargando paciente...'));
+                        } else if (patientSnapshot.hasError) {
+                          return ListTile(title: Text('Error al cargar paciente'));
+                        } else {
+                          final patient = patientSnapshot.data!;
+                          String date = DateFormat('yyyy-MM-dd HH:mm').format(appointment.appointmentDate);
+                          return ListTile(
+                            title: Text('Paciente: ${patient.name} ${patient.surname}'),
+                            subtitle: Text('Razón: ${appointment.reason}\nUbicación: ${appointment.ubication ?? "No disponible"}'),
+                            trailing: Text('Fecha: $date'),
+                          );
+                        }
+                      },
+                    );
                   },
                 );
+              }
 
-
-              },
-            );
-          }
-        },
+              return TabBarView(
+                children: [
+                  buildAppointmentList(activeAppointments),
+                  buildAppointmentList(expiredAppointments),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }
