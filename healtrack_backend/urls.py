@@ -5,8 +5,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 from healtrack_backend.views import DoctorListCreateView, MedicationListCreateView, \
     PatientListCreateView, AppointmentListCreateView, DoctorDetailView, PatientDetailView, AppointmentDetailView, \
-    MedicationDetailView, AppointmentsById, PatientsById, PatientRegisterView, SimpleLoginView, DoctorRegisterView, \
-    MedicationsByPatientId
+    MedicationDetailView, AppointmentsByDoctorId, PatientsById, PatientRegisterView, SimpleLoginView, DoctorRegisterView, \
+    MedicationsByPatientId, AppointmentsByPatientId
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,10 +15,11 @@ urlpatterns = [
     path('appointments/', AppointmentListCreateView.as_view()),
     path('medications/', MedicationListCreateView.as_view()),
     path('doctors/<int:pk>/', DoctorDetailView.as_view()),
-    path('doctors/<int:pk>/appointments/', AppointmentsById.as_view()),
+    path('doctors/<int:pk>/appointments/', AppointmentsByDoctorId.as_view()),
     path('doctors/<int:pk>/patients/', PatientsById.as_view()),
     path('patients/<int:pk>/', PatientDetailView.as_view()),
     path('patients/<int:pk>/medications/', MedicationsByPatientId.as_view()),
+    path('patients/<int:pk>/appointments/', AppointmentsByPatientId.as_view()),
     path('appointments/<int:pk>/', AppointmentDetailView.as_view()),
     path('medications/<int:pk>/', MedicationDetailView.as_view()),
 

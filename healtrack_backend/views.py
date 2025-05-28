@@ -263,7 +263,7 @@ class AppointmentDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AppointmentsById(APIView):
+class AppointmentsByDoctorId(APIView):
     serializer_class = AppointmentSerializer
     def get(self, request, pk):
         appointments = Appointment.objects.filter(doctor=pk)
@@ -286,3 +286,10 @@ class MedicationsByPatientId(APIView):
         serializer = MedicationSerializer(medications, many=True)
         return Response(serializer.data)
 
+
+class AppointmentsByPatientId(APIView):
+    serializer_class = AppointmentSerializer
+    def get(self, request, pk):
+        appointments = Appointment.objects.filter(patient=pk)
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
