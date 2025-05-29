@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/models/doctor.dart';
 import 'package:project/models/patient.dart';
+import 'package:project/views/doctors/doctor_make_appointment.dart'; // 👈 Importar la vista para crear cita
 
 class DoctorPatientsScreen extends StatefulWidget {
   final Doctor doctor;
@@ -20,7 +21,8 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
   bool _hasError = false;
   String _selectedMood = 'All';
 
-  final List<String> _moodOptions = ['All',
+  final List<String> _moodOptions = [
+    'All',
     'Happy',
     'Sad',
     'Angry',
@@ -32,7 +34,8 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
     'Depressed',
     'Numb',
     'Panicked',
-    'Suicidal'];
+    'Suicidal',
+  ];
 
   @override
   void initState() {
@@ -66,8 +69,7 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
       if (_selectedMood == 'All') {
         _filteredPatients = List.from(_allPatients);
       } else {
-        _filteredPatients =
-            _allPatients.where((p) => p.mood == _selectedMood).toList();
+        _filteredPatients = _allPatients.where((p) => p.mood == _selectedMood).toList();
       }
     });
   }
@@ -119,7 +121,8 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
           final patient = _filteredPatients[index];
           return Card(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15)),
+              borderRadius: BorderRadius.circular(15),
+            ),
             elevation: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
@@ -141,10 +144,17 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
                   Text('Mood: ${patient.mood}'),
                 ],
               ),
-              trailing:
-              const Icon(Icons.arrow_forward_ios, size: 16),
+              trailing: const Icon(Icons.calendar_today, size: 20),
               onTap: () {
-                // Add navigation to patient detail if needed
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DoctorMakeAppointment(
+                      doctor: widget.doctor,
+                      patient: patient,
+                    ),
+                  ),
+                );
               },
             ),
           );
