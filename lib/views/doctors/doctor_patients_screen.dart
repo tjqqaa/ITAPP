@@ -14,9 +14,25 @@ class DoctorPatientsScreen extends StatefulWidget {
 }
 
 class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
-  List<Patient> _patients = [];
+  List<Patient> _allPatients = [];
+  List<Patient> _filteredPatients = [];
   bool _isLoading = true;
   bool _hasError = false;
+  String _selectedMood = 'All';
+
+  final List<String> _moodOptions = ['All',
+    'Happy',
+    'Sad',
+    'Angry',
+    'Tired',
+    'Anxious',
+    'Neutral',
+    'Hopeless',
+    'Overwhelmed',
+    'Depressed',
+    'Numb',
+    'Panicked',
+    'Suicidal'];
 
   @override
   void initState() {
@@ -33,7 +49,8 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       setState(() {
-        _patients = data.map((json) => Patient.fromJson(json)).toList();
+        _allPatients = data.map((json) => Patient.fromJson(json)).toList();
+        _applyMoodFilter();
         _isLoading = false;
       });
     } else {
@@ -42,6 +59,17 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  void _applyMoodFilter() {
+    setState(() {
+      if (_selectedMood == 'All') {
+        _filteredPatients = List.from(_allPatients);
+      } else {
+        _filteredPatients =
+            _allPatients.where((p) => p.mood == _selectedMood).toList();
+      }
+    });
   }
 
   @override
@@ -53,20 +81,45 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
         title: Text('$doctorName - Patients'),
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: DropdownButton<String>(
+              value: _selectedMood,
+              underline: SizedBox(),
+              dropdownColor: Colors.white,
+              icon: const Icon(Icons.filter_list, color: Colors.white),
+              style: const TextStyle(color: Colors.black),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  _selectedMood = newValue;
+                  _applyMoodFilter();
+                }
+              },
+              items: _moodOptions.map<DropdownMenuItem<String>>((String mood) {
+                return DropdownMenuItem<String>(
+                  value: mood,
+                  child: Text(mood),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _hasError
           ? const Center(child: Text('Failed to load patients.'))
-          : _patients.isEmpty
-          ? const Center(child: Text('No patients found for this doctor.'))
+          : _filteredPatients.isEmpty
+          ? const Center(child: Text('No patients found for this filter.'))
           : ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: _patients.length,
+        itemCount: _filteredPatients.length,
         itemBuilder: (context, index) {
-          final patient = _patients[index];
+          final patient = _filteredPatients[index];
           return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15)),
             elevation: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
@@ -85,9 +138,11 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
                   Text('Email: ${patient.email}'),
                   if (patient.phoneNumber != null)
                     Text('Phone: ${patient.phoneNumber}'),
+                  Text('Mood: ${patient.mood}'),
                 ],
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              trailing:
+              const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
                 // Add navigation to patient detail if needed
               },
