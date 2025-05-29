@@ -1,0 +1,149 @@
+[
+  {
+    "nombre": "Apteka Dbam o Zdrowie",
+    "direccion": "ul. Legnicka 56",
+    "codigo_postal": "54-204",
+    "lat": 51.1213,
+    "lng": 16.9915
+  },
+  {
+    "nombre": "Apteka Cefarm",
+    "direccion": "ul. Grabiszyńska 85",
+    "codigo_postal": "53-503",
+    "lat": 51.0971,
+    "lng": 17.0102
+  },
+  {
+    "nombre": "Apteka Gemini",
+    "direccion": "ul. Piłsudskiego 49-57",
+    "codigo_postal": "50-032",
+    "lat": 51.0998,
+    "lng": 17.0305
+  },
+  {
+    "nombre": "Apteka Dr. Max",
+    "direccion": "ul. Powstańców Śląskich 2-4",
+    "codigo_postal": "53-333",
+    "lat": 51.0912,
+    "lng": 17.0217
+  },
+  {
+    "nombre": "Apteka Super-Pharm",
+    "direccion": "ul. Świdnicka 40",
+    "codigo_postal": "50-068",
+    "lat": 51.1067,
+    "lng": 17.0322
+  },
+  {
+    "nombre": "Apteka Europejska",
+    "direccion": "ul. Piłsudskiego 84",
+    "codigo_postal": "50-020",
+    "lat": 51.0986,
+    "lng": 17.0250
+  },
+  {
+    "nombre": "Apteka DOZ",
+    "direccion": "ul. Komandorska 53",
+    "codigo_postal": "53-342",
+    "lat": 51.0951,
+    "lng": 17.0277
+  },
+  {
+    "nombre": "Apteka Cosmedica",
+    "direccion": "ul. Długa 37/47",
+    "codigo_postal": "53-657",
+    "lat": 51.1261,
+    "lng": 17.0118
+  },
+  {
+    "nombre": "Apteka Pod Koroną",
+    "direccion": "ul. Sienkiewicza 60",
+    "codigo_postal": "50-349",
+    "lat": 51.1206,
+    "lng": 17.0586
+  },
+  {
+    "nombre": "Apteka Na Rogu",
+    "direccion": "ul. Jedności Narodowej 85",
+    "codigo_postal": "50-262",
+    "lat": 51.1201,
+    "lng": 17.0495
+  },
+  {
+    "nombre": "Apteka Pod Lwem",
+    "direccion": "ul. Wita Stwosza 16",
+    "codigo_postal": "50-148",
+    "lat": 51.1085,
+    "lng": 17.0379
+  },
+  {
+    "nombre": "Apteka Medicover",
+    "direccion": "ul. Kiełczowska 41",
+    "codigo_postal": "51-315",
+    "lat": 51.1457,
+    "lng": 17.1396
+  },
+  {
+    "nombre": "Apteka Dbam o Zdrowie",
+    "direccion": "ul. Krzywoustego 126",
+    "codigo_postal": "51-421",
+    "lat": 51.1315,
+    "lng": 17.1081
+  },
+  {
+    "nombre": "Apteka Centrum",
+    "direccion": "ul. Rynek 7",
+    "codigo_postal": "50-106",
+    "lat": 51.1090,
+    "lng": 17.0326
+  },
+  {
+    "nombre": "Apteka Dr.Max",
+    "direccion": "ul. Hubska 72",
+    "codigo_postal": "50-502",
+    "lat": 51.0902,
+    "lng": 17.0412
+  },
+  {
+    "nombre": "Apteka Św. Marcina",
+    "direccion": "ul. Św. Marcina 4",
+    "codigo_postal": "50-327",
+    "lat": 51.1163,
+    "lng": 17.0515
+  },
+  {
+    "nombre": "Apteka Nova",
+    "direccion": "ul. Nowowiejska 76",
+    "codigo_postal": "50-340",
+    "lat": 51.1198,
+    "lng": 17.0623
+  },
+  {
+    "nombre": "Apteka DOZ",
+    "direccion": "ul. Opolska 37",
+    "codigo_postal": "52-010",
+    "lat": 51.0793,
+    "lng": 17.0850
+  },
+  {
+    "nombre": "Apteka Gemini",
+    "direccion": "ul. Strzegomska 206",
+    "codigo_postal": "54-432",
+    "lat": 51.1268,
+    "lng": 16.9619
+  },
+  {
+    "nombre": "Apteka Dbam o Zdrowie",
+    "direccion": "ul. Borowska 213",
+    "codigo_postal": "50-556",
+    "lat": 51.0745,
+    "lng": 17.0468
+  },
+  {
+    "nombre": "Apteka Dr.Max",
+    "direccion": "ul. Hallera 52",
+    "codigo_postal": "53-324",
+    "lat": 51.0923,
+    "lng": 17.0042
+  }
+]

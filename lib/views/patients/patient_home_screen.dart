@@ -11,6 +11,7 @@ import 'package:project/views/patients/prescriptions_screen.dart';
 import 'package:project/views/patients/patient_mood_screen.dart';
 import 'package:project/views/patients/emergency_screen.dart';
 import 'package:project/views/patients/select_doctor_screen.dart';
+import 'package:project/views/patients/farmacia.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
@@ -173,6 +174,19 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SelectDoctorScreen(patient: widget.patient),
+                    ),
+                  );
+                },
+              ),
+              buildCustomButton(
+                context: context,
+                icon: Icons.person_add,
+                label: 'Pharmacy near',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FarmaciasCercanasScreen(),
                     ),
                   );
                 },
