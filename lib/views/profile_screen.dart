@@ -28,6 +28,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _fetchUserData();
   }
+  void _showSupportDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Contact Support'),
+          content: const Text(
+              'For support, you can reach us at:\nsupport@example.com\nOr call: +1 (800) 123-4567'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _fetchUserData() async {
     if (widget.user is Patient) {
@@ -173,6 +193,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: const Text('Log Out', style: TextStyle(fontSize: 18)),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  _showSupportDialog();  // Llamada al diálogo de soporte
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,  // Color personalizado
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text('Contact Support', style: TextStyle(fontSize: 18)),
               ),
             ),
           ],
