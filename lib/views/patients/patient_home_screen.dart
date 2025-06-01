@@ -89,7 +89,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PrescriptionsScreen(),
+                      builder: (context) => PrescriptionsScreen(patientId: widget.patient.id),
                     ),
                   );
                 },

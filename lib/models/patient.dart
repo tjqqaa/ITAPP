@@ -5,7 +5,7 @@ class Patient extends User {
   final String mood;
   final bool isEmergencyContactNotified;
   final String? emergencyContact;
-  final int healthPoints;
+   int healthPoints;
   final int? doctorId; // Reference to the assigned doctor
 
   Patient({

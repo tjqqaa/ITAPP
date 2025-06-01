@@ -89,11 +89,11 @@ class _FarmaciasCercanasScreenState extends State<FarmaciasCercanasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Farmacias cercanas')),
+      appBar: AppBar(title: Text('Pharmacy near')),
       body: _posicionActual == null
           ? Center(child: CircularProgressIndicator())
           : farmaciasCercanas.isEmpty
-          ? Center(child: Text('No hay farmacias cercanas en el radio seleccionado.'))
+          ? Center(child: Text('There are no pharmacies near.'))
           : ListView.builder(
         itemCount: farmaciasCercanas.length,
         itemBuilder: (context, index) {

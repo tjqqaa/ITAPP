@@ -1,16 +1,62 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-import 'package:flutter/material.dart';
+import 'package:project/models/medication.dart';
 
-class PrescriptionsScreen extends StatelessWidget {
-  const PrescriptionsScreen({Key? key}) : super(key: key);
+class PrescriptionsScreen extends StatefulWidget {
+  final int patientId;
+
+  const PrescriptionsScreen({Key? key, required this.patientId}) : super(key: key);
+
+  @override
+  State<PrescriptionsScreen> createState() => _PrescriptionsScreenState();
+}
+
+class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
+  List<Medication> _medications = [];
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMedications();
+  }
+
+  Future<void> _fetchMedications() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/${widget.patientId}/medications/'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          _medications = data.map((json) => Medication.fromJson(json)).toList();
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple, // Same purple color as the rest of the app
-        title: Text(
+        backgroundColor: Colors.purple,
+        title: const Text(
           'Prescriptions',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
@@ -18,64 +64,62 @@ class PrescriptionsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _hasError
+            ? const Center(child: Text('Failed to load prescriptions.'))
+            : _medications.isEmpty
+            ? const Center(child: Text('No prescriptions found.'))
+            : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Header Text
             Text(
               'Your Prescriptions',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple, // Same purple color
+                color: Colors.purple,
               ),
             ),
-            SizedBox(height: 20),
-
-            // Grid of prescriptions
+            const SizedBox(height: 20),
             Expanded(
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Two columns in the grid
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 0.75, // Adjusting the aspect ratio of each item
+                  childAspectRatio: 0.75,
                 ),
-                itemCount: 6, // Simulating 6 prescriptions
+                itemCount: _medications.length,
                 itemBuilder: (context, index) {
+                  final med = _medications[index];
                   return Card(
                     elevation: 5,
-                    margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: InkWell(
                       onTap: () {
-                        // Action when the user taps on a prescription
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Viewing prescription #${index + 1}')),
+                          SnackBar(content: Text('Viewing ${med.name}')),
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.medical_services,
-                              color: Colors.purple, // Purple icon for consistency
-                              size: 40,
-                            ),
-                            SizedBox(height: 12),
+                            const Icon(Icons.medical_services, color: Colors.purple, size: 40),
+                            const SizedBox(height: 12),
                             Text(
-                              'Prescription #${index + 1}',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              med.name,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
-                              'Medication: Simulated',
-                              style: TextStyle(fontSize: 14),
+                              'Dosage: ${med.dosage}',
+                              style: const TextStyle(fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           ],
