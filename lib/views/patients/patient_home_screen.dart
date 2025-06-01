@@ -12,7 +12,7 @@ import 'package:project/views/patients/patient_mood_screen.dart';
 import 'package:project/views/patients/emergency_screen.dart';
 import 'package:project/views/patients/select_doctor_screen.dart';
 import 'package:project/views/patients/farmacia.dart';
-
+import 'package:project/views/patients/patientservice.dart';
 class PatientHomeScreen extends StatefulWidget {
   final Patient patient;
 
@@ -116,18 +116,36 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     id: 1,
                     title: 'Hora de tomar tu medicamento',
                     body: 'Recuerda tomar tu medicación.',
-                    delay: Duration(seconds: 5), // Delay artificial de prueba
+                    delay: Duration(seconds: 5),
                   );
 
                   debugPrint("✅ Notification launched");
 
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Reminder programmed")),
-                    );
+                  // Add 10 health points and update backend
+                  final newPoints = widget.patient.healthPoints + 10;
+                  final bool success = await PatientService.updatePatientData(widget.patient.id, widget.patient.toApiMapMood());
+
+
+                  if (success) {
+                    setState(() {
+                      widget.patient.healthPoints = newPoints;
+                    });
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Gained 10 health points!")),
+                      );
+                    }
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Failed to update health points")),
+                      );
+                    }
                   }
                 },
               ),
+
               buildCustomButton(
                 context: context,
                 icon: Icons.emoji_emotions,
