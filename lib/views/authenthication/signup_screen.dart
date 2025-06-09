@@ -23,10 +23,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _phoneController = TextEditingController();
   final _dobController = TextEditingController();
   final _usernameController = TextEditingController();
-  final _specializationController = TextEditingController(); // only for doctor
-  final _emergencyContactController = TextEditingController(); // only for patient
+  final _specializationController = TextEditingController();
+  final _emergencyContactController = TextEditingController();
 
   final String baseUrl = "https://healtrack-app-backend.azurewebsites.net/";
+
+  Future<void> _pickDate() async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) => Theme(
+        data: Theme.of(context),
+        child: child!,
+      ),
+    );
+    if (date != null) {
+      _dobController.text = date.toIso8601String().split('T').first;
+    }
+  }
 
   Future<void> _register() async {
     final email = _emailController.text.trim();
@@ -46,15 +62,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         dob.isEmpty ||
         username.isEmpty ||
         (_selectedRole == 'Doctor' && _specializationController.text.trim().isEmpty) ||
-        (_selectedRole == 'Paciente' && _emergencyContactController.text.trim().isEmpty)) {
+        (_selectedRole == 'Patient' && _emergencyContactController.text.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Completa todos los campos')),
+        const SnackBar(content: Text('Please complete all fields')),
       );
       return;
     }
 
     try {
-      if (_selectedRole == 'Paciente') {
+      if (_selectedRole == 'Patient') {
         final response = await http.post(
           Uri.parse("${baseUrl}register/patient/"),
           headers: {'Content-Type': 'application/json'},
@@ -69,10 +85,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "emergency_contact": _emergencyContactController.text.trim(),
             "health_points": 0,
             "doctor": null,
-            "password": password
+            "password": password,
           }),
         );
-
 
         if (response.statusCode == 201 || response.statusCode == 200) {
           final data = jsonDecode(response.body);
@@ -82,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             MaterialPageRoute(builder: (_) => PatientHomeScreen(patient: patient)),
           );
         } else {
-          throw Exception('Error al registrar paciente. Código: ${response.statusCode}');
+          throw Exception('Failed to register patient. Code: ${response.statusCode}');
         }
       } else if (_selectedRole == 'Doctor') {
         final response = await http.post(
@@ -96,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "birth_date": dob,
             "specialization": _specializationController.text.trim(),
             "username": username,
-            "password": password
+            "password": password,
           }),
         );
 
@@ -108,81 +123,108 @@ class _SignUpScreenState extends State<SignUpScreen> {
             MaterialPageRoute(builder: (_) => DoctorHomeScreen(doctor: doctor)),
           );
         } else {
-          print("Error al registrar doctor. Código: ${response.statusCode}");
-          print("Respuesta del servidor: ${response.body}");
-          print({
-            "username": username,
-            "password": password,
-            "email": email,
-            "birth_date": dob,
-            "phone_number": phone,
-            "first_name": name,
-            "last_name": surname,
-            "specialization": _specializationController.text.trim()
-          });
-
-          throw Exception('Error al registrar doctor. Código: ${response.statusCode}. Respuesta: ${response.body}');
-
+          throw Exception('Failed to register doctor. Code: ${response.statusCode}');
         }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registro fallido: $e')),
+        SnackBar(content: Text('Registration failed: $e')),
       );
     }
   }
 
+  InputDecoration _inputDecoration(String label) {
+    final theme = Theme.of(context);
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: theme.colorScheme.surface,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrarse')),
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+        centerTitle: true,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            TextField(controller: _nameController, decoration: const InputDecoration(labelText: 'Nombre')),
-            TextField(controller: _surnameController, decoration: const InputDecoration(labelText: 'Apellido')),
-            TextField(controller: _usernameController, decoration: const InputDecoration(labelText: 'Nombre de usuario')),
-            TextField(controller: _emailController, decoration: const InputDecoration(labelText: 'Correo electrónico')),
-            TextField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña')),
-            TextField(controller: _phoneController, decoration: const InputDecoration(labelText: 'Teléfono')),
-            TextField(controller: _dobController, decoration: const InputDecoration(labelText: 'Fecha de nacimiento (YYYY-MM-DD)')),
-            const SizedBox(height: 10),
+            TextField(controller: _nameController, decoration: _inputDecoration('First Name')),
+            const SizedBox(height: 12),
+            TextField(controller: _surnameController, decoration: _inputDecoration('Last Name')),
+            const SizedBox(height: 12),
+            TextField(controller: _usernameController, decoration: _inputDecoration('Username')),
+            const SizedBox(height: 12),
+            TextField(controller: _emailController, decoration: _inputDecoration('Email')),
+            const SizedBox(height: 12),
+            TextField(controller: _passwordController, obscureText: true, decoration: _inputDecoration('Password')),
+            const SizedBox(height: 12),
+            TextField(controller: _phoneController, decoration: _inputDecoration('Phone Number')),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _dobController,
+              readOnly: true,
+              onTap: _pickDate,
+              decoration: _inputDecoration('Date of Birth'),
+            ),
+            const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: _selectedRole,
-              hint: const Text("Selecciona tu rol"),
+              hint: const Text("Select your role"),
               items: const [
-                DropdownMenuItem(value: 'Paciente', child: Text('Paciente')),
+                DropdownMenuItem(value: 'Patient', child: Text('Patient')),
                 DropdownMenuItem(value: 'Doctor', child: Text('Doctor')),
               ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedRole = value;
-                });
-              },
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              onChanged: (value) => setState(() => _selectedRole = value),
+              decoration: _inputDecoration("Role"),
             ),
-            const SizedBox(height: 10),
-            if (_selectedRole == 'Paciente')
+            const SizedBox(height: 12),
+            if (_selectedRole == 'Patient')
               TextField(
                 controller: _emergencyContactController,
-                decoration: const InputDecoration(labelText: 'Contacto de emergencia'),
+                decoration: _inputDecoration('Emergency Contact'),
               ),
             if (_selectedRole == 'Doctor')
               TextField(
                 controller: _specializationController,
-                decoration: const InputDecoration(labelText: 'Especialización'),
+                decoration: _inputDecoration('Specialization'),
               ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _register,
-              child: const Text('Registrarse'),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _register,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Sign Up', style: TextStyle(fontSize: 16)),
+              ),
             ),
+            const SizedBox(height: 12),
             TextButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
-              child: const Text('¿Ya tienes cuenta? Inicia sesión'),
+              child: Text(
+                'Already have an account? Log in',
+                style: TextStyle(color: theme.colorScheme.primary),
+              ),
             ),
           ],
         ),

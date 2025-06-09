@@ -26,7 +26,6 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
 
   Future<void> _fetchPatientAndDoctors() async {
     try {
-      // 1. Obtener datos actualizados del paciente
       final patientResponse = await http.get(
         Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/${widget.patient.id}/'),
       );
@@ -35,12 +34,9 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
         final patientData = jsonDecode(patientResponse.body);
         _currentDoctorId = patientData['doctor'];
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error loading patient data.")),
-        );
+        _showSnackBar("Error loading patient data.");
       }
 
-      // 2. Obtener la lista de doctores
       final doctorsResponse = await http.get(
         Uri.parse('https://healtrack-app-backend.azurewebsites.net/doctors/'),
       );
@@ -52,17 +48,17 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
           _isLoading = false;
         });
       } else {
+        _showSnackBar("Error loading doctors.");
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error loading doctors.")),
-        );
       }
     } catch (e) {
+      _showSnackBar("Unexpected error: $e");
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unexpected error: $e")),
-      );
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _selectDoctor(int doctorId) async {
@@ -77,30 +73,35 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
 
     if (response.statusCode == 200) {
       if (context.mounted) {
-        setState(() {
-          _currentDoctorId = doctorId;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Doctor assigned successfully.")),
-        );
+        setState(() => _currentDoctorId = doctorId);
+        _showSnackBar("Doctor assigned successfully.");
         Navigator.pop(context);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error assigning doctor.")),
-      );
+      _showSnackBar("Error assigning doctor.");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Select Your Doctor")),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _currentDoctorId != null
-          ? _buildAssignedDoctorView()
-          : _buildDoctorsListView(),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        title: const Text(
+          "Select Your Doctor",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _currentDoctorId != null
+            ? _buildAssignedDoctorView()
+            : _buildDoctorsListView(),
+      ),
     );
   }
 
@@ -111,42 +112,73 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
     );
 
     return assignedDoctor.isEmpty
-        ? Center(child: Text("Doctor asignado no encontrado."))
-        : Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Ya tienes un doctor asignado:",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ? const Center(child: Text("Assigned doctor not found."))
+        : Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 6,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.verified_user, size: 60, color: Colors.green),
+                const SizedBox(height: 16),
+                Text(
+                  "You already have a doctor:",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "${assignedDoctor['first_name']} ${assignedDoctor['last_name']}",
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  assignedDoctor['email'] ?? '',
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 20),
-          Text(
-            "${assignedDoctor['first_name']} ${assignedDoctor['last_name']}",
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 8),
-          Text(
-            assignedDoctor['email'] ?? '',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildDoctorsListView() {
     return ListView.builder(
+      padding: const EdgeInsets.all(12),
       itemCount: _doctors.length,
       itemBuilder: (context, index) {
         final doctor = _doctors[index];
-        return ListTile(
-          title: Text('${doctor['first_name']} ${doctor['last_name']}'),
-          subtitle: Text(doctor['email']),
-          trailing: ElevatedButton(
-            onPressed: () => _selectDoctor(doctor['id']),
-            child: Text("Select"),
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 3,
+          child: ListTile(
+            leading: const CircleAvatar(
+              backgroundColor: Colors.blueAccent,
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            title: Text('${doctor['first_name']} ${doctor['last_name']}'),
+            subtitle: Text(doctor['email'] ?? ''),
+            trailing: ElevatedButton(
+              onPressed: () => _selectDoctor(doctor['id']),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text("Select"),
+            ),
           ),
         );
       },

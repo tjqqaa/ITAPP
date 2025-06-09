@@ -1,46 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:project/views/patients/patient_home_screen.dart'; // Paciente
-import 'package:project/views/doctors/doctor_home_screen.dart';   // Doctor
+
+import 'package:project/views/patients/patient_home_screen.dart';
+import 'package:project/views/doctors/doctor_home_screen.dart';
 import 'package:project/views/authenthication/signup_screen.dart';
 import 'package:project/models/patient.dart';
-import 'package:project/models/doctor.dart'; // Importar modelo de Doctor
+import 'package:project/models/doctor.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; // Para mostrar un indicador de carga
+  bool _isLoading = false;
 
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    final url = Uri.parse('https://healtrack-app-backend.azurewebsites.net/login/');
+    setState(() => _isLoading = true);
 
     try {
       final response = await http.post(
-        url,
+        Uri.parse('https://healtrack-app-backend.azurewebsites.net/login/'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'username': email,
-          'password': password,
-        }),
+        body: jsonEncode({'username': email, 'password': password}),
       );
-      final data = jsonDecode(response.body);
-      print("Login response: $data");
 
+      final data = jsonDecode(response.body);
       final role = data['role'];
       final id = data['id'];
 
@@ -51,109 +44,117 @@ class _LoginScreenState extends State<LoginScreen> {
           );
 
           if (doctorResponse.statusCode == 200) {
-            final doctorData = jsonDecode(doctorResponse.body);
-            final doctor = Doctor.fromJson(doctorData);
+            final doctor = Doctor.fromJson(jsonDecode(doctorResponse.body));
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => DoctorHomeScreen(doctor: doctor)),
+              MaterialPageRoute(builder: (_) => DoctorHomeScreen(doctor: doctor)),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error al obtener datos del doctor')),
-            );
+            _showError('Error al obtener datos del doctor');
           }
-
         } else if (role == 'patient') {
           final patientResponse = await http.get(
             Uri.parse('https://healtrack-app-backend.azurewebsites.net/patients/$id'),
           );
 
           if (patientResponse.statusCode == 200) {
-            final patientData = jsonDecode(patientResponse.body);
-            final patient = Patient.fromJson(patientData);
+            final patient = Patient.fromJson(jsonDecode(patientResponse.body));
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => PatientHomeScreen(patient: patient)),
+              MaterialPageRoute(builder: (_) => PatientHomeScreen(patient: patient)),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error al obtener datos del paciente')),
-            );
+            _showError('Error al obtener datos del paciente');
           }
-
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Rol de usuario no reconocido')),
-          );
+          _showError('Rol de usuario no reconocido');
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Credenciales incorrectas o datos incompletos')),
-        );
+        _showError('Credenciales incorrectas');
       }
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al conectar con el servidor')),
-      );
+    } catch (_) {
+      _showError('Error de conexión con el servidor');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+      MaterialPageRoute(builder: (_) => const SignUpScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Welcome to HealTrack",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 12,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.medical_services, size: 64, color: theme.primaryColor),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Welcome to HealTrack",
+                    style: textTheme.displayMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: "Username",
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _login,
+                      child: _isLoading
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                          : const Text("Log in"),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: _navigateToSignUp,
+                    child: const Text("Don't have an account? Sign up"),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: "Username",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: "Password",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _login, // Deshabilitar si está cargando
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Log in"),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: _navigateToSignUp,
-                child: const Text("¿No account? Sign up"),
-              ),
-            ],
+            ),
           ),
         ),
       ),
