@@ -38,7 +38,7 @@ class _FarmaciasCercanasScreenState extends State<FarmaciasCercanasScreen> {
   List<Farmacia> todasLasFarmacias = [];
   List<Farmacia> farmaciasCercanas = [];
   Position? _posicionActual;
-  final double radioMetros = 1000; // Cambia el radio si lo deseas
+  final double radioMetros = 1000;
 
   @override
   void initState() {
@@ -61,6 +61,7 @@ class _FarmaciasCercanasScreenState extends State<FarmaciasCercanasScreen> {
       await Geolocator.openLocationSettings();
       return;
     }
+
     LocationPermission permiso = await Geolocator.checkPermission();
     if (permiso == LocationPermission.denied) {
       permiso = await Geolocator.requestPermission();
@@ -72,15 +73,14 @@ class _FarmaciasCercanasScreenState extends State<FarmaciasCercanasScreen> {
     setState(() {
       _posicionActual = posicion;
     });
+
     filtrarFarmaciasCercanas(posicion.latitude, posicion.longitude);
   }
 
   void filtrarFarmaciasCercanas(double lat, double lng) {
     setState(() {
       farmaciasCercanas = todasLasFarmacias.where((f) {
-        double distancia = Geolocator.distanceBetween(
-          lat, lng, f.lat, f.lng,
-        );
+        double distancia = Geolocator.distanceBetween(lat, lng, f.lat, f.lng);
         return distancia <= radioMetros;
       }).toList();
     });
@@ -89,23 +89,55 @@ class _FarmaciasCercanasScreenState extends State<FarmaciasCercanasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Pharmacy near')),
+      appBar: AppBar(
+        title: const Text('Nearby Pharmacies'),
+        backgroundColor: Colors.teal,
+        centerTitle: true,
+      ),
       body: _posicionActual == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : farmaciasCercanas.isEmpty
-          ? Center(child: Text('There are no pharmacies near.'))
-          : ListView.builder(
-        itemCount: farmaciasCercanas.length,
-        itemBuilder: (context, index) {
-          final farmacia = farmaciasCercanas[index];
-          return Card(
-            child: ListTile(
-              leading: Icon(Icons.local_pharmacy, color: Colors.green),
-              title: Text(farmacia.nombre),
-              subtitle: Text('${farmacia.direccion}\n${farmacia.codigoPostal}'),
-            ),
-          );
-        },
+          ? const Center(
+        child: Text(
+          'No pharmacies found within 1km.',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+      )
+          : Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: farmaciasCercanas.length,
+          itemBuilder: (context, index) {
+            final farmacia = farmaciasCercanas[index];
+            return Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: const Icon(Icons.local_pharmacy, color: Colors.teal, size: 36),
+                title: Text(
+                  farmacia.nombre,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '${farmacia.direccion}\n${farmacia.codigoPostal}',
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+                onTap: () {
+                  // Acción al tocar una farmacia (ej: mostrar en mapa)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Selected ${farmacia.nombre}')),
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

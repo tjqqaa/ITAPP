@@ -114,8 +114,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 onTap: () async {
                   await NotificationService.showMedicationReminder(
                     id: 1,
-                    title: 'Hora de tomar tu medicamento',
-                    body: 'Recuerda tomar tu medicación.',
+                    title: 'Time to take your pills',
+                    body: 'Remember to take your pills.',
                     delay: Duration(seconds: 5),
                   );
 
@@ -133,9 +133,13 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Gained 10 health points!")),
+                        SnackBar(
+                          content: const Text("Gained 10 health points!"),
+                          backgroundColor: Colors.green,
+                        ),
                       );
                     }
+
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
