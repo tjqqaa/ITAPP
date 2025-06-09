@@ -45,7 +45,12 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
       if (time != null) {
         setState(() {
           _selectedDate = DateTime(
-              picked.year, picked.month, picked.day, time.hour, time.minute);
+            picked.year,
+            picked.month,
+            picked.day,
+            time.hour,
+            time.minute,
+          );
         });
       }
     }
@@ -53,8 +58,7 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
 
   Future<Doctor> fetchDoctor(int doctorId) async {
     final response = await http.get(
-      Uri.parse(
-          'https://healtrack-app-backend.azurewebsites.net/doctors/$doctorId/'),
+      Uri.parse('https://healtrack-app-backend.azurewebsites.net/doctors/$doctorId/'),
       headers: {
         'accept': 'application/json',
       },
@@ -79,16 +83,19 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
           location: _locationController.text,
           type: _type,
           state: 'pending',
-          // estado fijo
           patientId: widget.patient.id,
           doctorId: widget.patient.doctorId,
         );
+
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cita creada')));
+          const SnackBar(content: Text('Appointment created successfully')),
+        );
+
         Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')));
+          SnackBar(content: Text('Error: $e')),
+        );
       } finally {
         setState(() => _isSubmitting = false);
       }
@@ -101,21 +108,29 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
     if (widget.patient.doctorId != null) {
       _doctor = fetchDoctor(widget.patient.doctorId!);
     } else {
-      _doctor = null; // No intentamos fetch
+      _doctor = null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Verificamos si el paciente tiene un doctor asignado
+    final theme = Theme.of(context);
+
     if (widget.patient.doctorId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Nueva Cita')),
+        appBar: AppBar(
+          title: const Text(
+            'New Appointment',
+            style: TextStyle(color: Colors.white),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: theme.primaryColor,
+        ),
         body: const Center(
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'No puedes pedir citas porque aún no tienes un doctor asignado.',
+              'You cannot book an appointment because no doctor is assigned yet.',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -128,9 +143,15 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
       );
     }
 
-    // Si tiene doctor, mostramos el formulario completo
     return Scaffold(
-      appBar: AppBar(title: const Text('Nueva Cita')),
+      appBar: AppBar(
+        title: const Text(
+          'New Appointment',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: theme.primaryColor,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -138,15 +159,15 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
           child: ListView(
             children: [
               Text(
-                'Paciente: ${widget.patient.name}',
+                'Patient: ${widget.patient.name}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-
+              const SizedBox(height: 8),
               FutureBuilder<Doctor?>(
                 future: _doctor,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text('Cargando doctor...');
+                    return const Text('Loading doctor...');
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (snapshot.hasData) {
@@ -156,56 +177,53 @@ class _MakePatientAppointmentsScreenState extends State<MakePatientAppointmentsS
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     );
                   } else {
-                    return const Text('No se pudo cargar el doctor');
+                    return const Text('Unable to load doctor');
                   }
                 },
               ),
-
               const SizedBox(height: 16),
-
               TextFormField(
                 controller: _reasonController,
-                decoration: const InputDecoration(labelText: 'Motivo'),
+                decoration: const InputDecoration(labelText: 'Reason'),
                 validator: (value) =>
-                value!.isEmpty
-                    ? 'Ingrese un motivo'
-                    : null,
+                value!.isEmpty ? 'Please enter a reason' : null,
               ),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _locationController,
-                decoration: const InputDecoration(labelText: 'Ubicación'),
+                decoration: const InputDecoration(labelText: 'Location'),
                 validator: (value) =>
-                value!.isEmpty
-                    ? 'Ingrese ubicación'
-                    : null,
+                value!.isEmpty ? 'Please enter a location' : null,
               ),
-
               const SizedBox(height: 16),
               ListTile(
-                title: const Text('Fecha y hora'),
+                title: const Text('Date and Time'),
                 subtitle: Text(_selectedDate.toString()),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: _pickDateTime,
               ),
-
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _type,
                 items: const [
-                  DropdownMenuItem(
-                      value: 'inPerson', child: Text('Presencial')),
+                  DropdownMenuItem(value: 'inPerson', child: Text('In Person')),
                   DropdownMenuItem(value: 'online', child: Text('Online')),
                 ],
                 onChanged: (val) => setState(() => _type = val!),
-                decoration: const InputDecoration(labelText: 'Tipo de cita'),
+                decoration: const InputDecoration(labelText: 'Appointment Type'),
               ),
-
               const SizedBox(height: 24),
-              ElevatedButton(
+              ElevatedButton.icon(
+                icon: const Icon(Icons.add, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primaryColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
                 onPressed: _isSubmitting ? null : _submit,
-                child: _isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('Crear cita'),
+                label: Text(
+                  _isSubmitting ? 'Submitting...' : 'Create Appointment',
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

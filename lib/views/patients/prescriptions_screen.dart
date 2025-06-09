@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:project/models/medication.dart';
 
 class PrescriptionsScreen extends StatefulWidget {
@@ -51,16 +50,61 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
     }
   }
 
+  Widget _buildMedicationCard(Medication med) {
+    return Card(
+      elevation: 4,
+      color: Colors.purple.shade50,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Viewing ${med.name}')),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.medication, color: Colors.deepPurple, size: 48),
+              const SizedBox(height: 12),
+              Text(
+                med.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepPurple,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Dosage: ${med.dosage}',
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: theme.primaryColor,
         title: const Text(
           'Prescriptions',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -72,13 +116,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
             ? const Center(child: Text('No prescriptions found.'))
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
+          children: [
+            const Text(
               'Your Prescriptions',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple,
+                color: Colors.deepPurple,
               ),
             ),
             const SizedBox(height: 20),
@@ -92,41 +136,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                 ),
                 itemCount: _medications.length,
                 itemBuilder: (context, index) {
-                  final med = _medications[index];
-                  return Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Viewing ${med.name}')),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.medical_services, color: Colors.purple, size: 40),
-                            const SizedBox(height: 12),
-                            Text(
-                              med.name,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Dosage: ${med.dosage}',
-                              style: const TextStyle(fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return _buildMedicationCard(_medications[index]);
                 },
               ),
             ),
