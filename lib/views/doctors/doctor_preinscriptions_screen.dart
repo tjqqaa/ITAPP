@@ -8,17 +8,15 @@ import 'package:project/models/patient.dart';
 class DoctorPreinscriptionsScreen extends StatefulWidget {
   final Doctor doctor;
 
-  const DoctorPreinscriptionsScreen({super.key, required this.doctor});
+  const DoctorPreinscriptionsScreen({Key? key, required this.doctor}) : super(key: key);
 
   @override
-  State<DoctorPreinscriptionsScreen> createState() =>
-      _DoctorPreinscriptionsScreenState();
+  State<DoctorPreinscriptionsScreen> createState() => _DoctorPreinscriptionsScreenState();
 }
 
-class _DoctorPreinscriptionsScreenState
-    extends State<DoctorPreinscriptionsScreen> {
+class _DoctorPreinscriptionsScreenState extends State<DoctorPreinscriptionsScreen> {
   List<Patient> _patients = [];
-  bool _loading = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -27,7 +25,7 @@ class _DoctorPreinscriptionsScreenState
   }
 
   Future<void> _fetchPatients() async {
-    setState(() => _loading = true);
+    setState(() => _isLoading = true);
 
     try {
       final response = await http.get(
@@ -37,29 +35,25 @@ class _DoctorPreinscriptionsScreenState
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        final List<Patient> fetchedPatients =
-        data.map((json) => Patient.fromJson(json)).toList();
+        final patients = data.map((json) => Patient.fromJson(json)).toList();
 
         setState(() {
-          _patients = fetchedPatients;
-          _loading = false;
+          _patients = patients;
+          _isLoading = false;
         });
       } else {
-        setState(() => _loading = false);
-        _showError('Error al obtener los pacientes del doctor.');
+        setState(() => _isLoading = false);
+        _showError('Failed to retrieve patients for this doctor.');
       }
     } catch (e) {
-      setState(() => _loading = false);
-      _showError('Error de red al obtener los pacientes.');
+      setState(() => _isLoading = false);
+      _showError('Network error while fetching patients.');
     }
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
     );
   }
 
@@ -73,43 +67,50 @@ class _DoctorPreinscriptionsScreenState
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setStateDialog) {
+          builder: (context, setDialogState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              title: const Text('Asignar Medicamento'),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                'Assign Medication',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<Patient>(
                       items: _patients.map((patient) {
-                        return DropdownMenuItem<Patient>(
+                        return DropdownMenuItem(
                           value: patient,
-                          child: Text('${patient.name} ${patient.surname} (ID: ${patient.id})'),
+                          child: Text('${patient.name} ${patient.surname}'),
                         );
                       }).toList(),
-                      onChanged: (value) {
-                        setStateDialog(() => selectedPatient = value);
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Paciente',
-                        border: OutlineInputBorder(),
+                      onChanged: (val) => setDialogState(() => selectedPatient = val),
+                      decoration: InputDecoration(
+                        labelText: 'Select Patient',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        filled: true,
+                        fillColor: Colors.grey[100],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nombre del medicamento',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Medication Name',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        filled: true,
+                        fillColor: Colors.grey[100],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: dosageController,
-                      decoration: const InputDecoration(
-                        labelText: 'Dosis',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Dosage',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        filled: true,
+                        fillColor: Colors.grey[100],
                       ),
                     ),
                   ],
@@ -118,16 +119,20 @@ class _DoctorPreinscriptionsScreenState
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
+                  child: const Text('Cancel'),
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
                   onPressed: isSubmitting
                       ? null
                       : () async {
                     if (selectedPatient != null &&
                         nameController.text.trim().isNotEmpty &&
                         dosageController.text.trim().isNotEmpty) {
-                      setStateDialog(() => isSubmitting = true);
+                      setDialogState(() => isSubmitting = true);
 
                       final response = await http.post(
                         Uri.parse('https://healtrack-app-backend.azurewebsites.net/medications/'),
@@ -145,12 +150,12 @@ class _DoctorPreinscriptionsScreenState
                         SnackBar(
                           content: Text(
                             response.statusCode == 201
-                                ? 'Medicamento asignado correctamente.'
-                                : 'Error al asignar medicamento.',
+                                ? 'Medication assigned successfully.'
+                                : 'Failed to assign medication.',
                           ),
                           backgroundColor: response.statusCode == 201
                               ? Colors.green
-                              : Colors.red,
+                              : Colors.redAccent,
                         ),
                       );
                     }
@@ -159,9 +164,9 @@ class _DoctorPreinscriptionsScreenState
                       ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                      : const Text('Asignar'),
+                      : const Text('Assign'),
                 ),
               ],
             );
@@ -173,38 +178,67 @@ class _DoctorPreinscriptionsScreenState
 
   @override
   Widget build(BuildContext context) {
-    final doctorName = '${widget.doctor.name} ${widget.doctor.surname}';
+    final doctorFullName = '${widget.doctor.name} ${widget.doctor.surname}';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preinscripciones - Dr. $doctorName'),
+        title: Text(
+          'Prescriptions - Dr. $doctorFullName',
+          style: const TextStyle(color: Colors.white),
+        ),
         backgroundColor: Theme.of(context).primaryColor,
-        elevation: 4,
+        elevation: 5,
+        centerTitle: true,
       ),
-      body: _loading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _patients.isEmpty
-          ? const Center(child: Text('No hay preinscripciones registradas.'))
-          : ListView.builder(
-        padding: const EdgeInsets.all(16.0),
+          ? const Center(
+        child: Text(
+          'No prescriptions found.',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      )
+          : ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         itemCount: _patients.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final patient = _patients[index];
-          return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 4,
-            margin: const EdgeInsets.symmetric(vertical: 8),
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: ListTile(
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               leading: CircleAvatar(
+                radius: 28,
                 backgroundColor: Theme.of(context).primaryColor,
-                child: const Icon(Icons.person, color: Colors.white),
+                child: Text(
+                  patient.name.substring(0, 1).toUpperCase(),
+                  style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
               ),
               title: Text(
                 '${patient.name} ${patient.surname}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
-              subtitle: Text('ID: ${patient.id}'),
+              // ID hidden by removing subtitle
+              trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+              onTap: () {
+                // Optionally add patient detail actions here
+              },
             ),
           );
         },
@@ -212,8 +246,11 @@ class _DoctorPreinscriptionsScreenState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddMedicationDialog,
         icon: const Icon(Icons.add),
-        label: const Text('Asignar'),
+        label: const Text('Assign', style: TextStyle(color: Colors.white)),
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 6,
       ),
+      backgroundColor: Colors.grey[100],
     );
   }
 }

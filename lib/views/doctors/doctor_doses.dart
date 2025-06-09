@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/doctor.dart';
-import 'package:project/others/custom_button.dart';
 
 class DoctorDosesScreen extends StatelessWidget {
   final Doctor doctor;
@@ -9,17 +8,22 @@ class DoctorDosesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctor Doses 📋'),
-        backgroundColor: Theme.of(context).primaryColor,
+        title: const Text(
+          'Doctor Doses',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: primaryColor,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // List of current medications/doses
             Expanded(
               child: ListView(
                 children: [
@@ -47,39 +51,39 @@ class DoctorDosesScreen extends StatelessWidget {
                     emoji: '🌡️',
                     context: context,
                   ),
-                  // Add more medications as needed
                 ],
               ),
             ),
-            // The "Add Dose" button is now smaller and at the bottom
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 200, // Making the button smaller
-                      child: buildCustomButton(
-                        context: context,
-                        icon: Icons.add,
-                        label: 'Add Dose', // Button label
-                        onTap: () {
-                          // Navigate to Add Dose screen
-                        },
-                      ),
-                    ),
-                  ],
+                child: SizedBox(
+                  width: 200,
+                  child: buildCustomButton(
+                    context: context,
+                    icon: Icons.add,
+                    label: 'Add Dose',
+                    backgroundColor: primaryColor,
+                    labelColor: Colors.white,
+                    iconColor: Colors.white,
+                    elevation: 6,
+                    borderRadius: 14,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    onTap: () {
+                      // TODO: Navegar a pantalla de añadir dosis
+                    },
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
+      backgroundColor: Colors.grey[100],
     );
   }
 
-  // Helper method to build medication tiles
   Widget _buildMedicationTile({
     required String name,
     required String dosage,
@@ -91,27 +95,55 @@ class DoctorDosesScreen extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).primaryColor,
-          child: Text(emoji, style: TextStyle(fontSize: 20)),
+          child: Text(emoji, style: const TextStyle(fontSize: 20)),
         ),
-        title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dosage: $dosage', style: TextStyle(fontStyle: FontStyle.italic)),
+            Text('Dosage: $dosage', style: const TextStyle(fontStyle: FontStyle.italic)),
             Text(frequency),
             Text(instructions),
           ],
         ),
         trailing: IconButton(
-          icon: Icon(Icons.edit),
+          icon: const Icon(Icons.edit),
           onPressed: () {
-            // Edit medication dose
+            // TODO: Editar dosis de medicamento
           },
         ),
       ),
+    );
+  }
+
+  Widget buildCustomButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    Color backgroundColor = Colors.blue,
+    Color labelColor = Colors.white,
+    Color iconColor = Colors.white,
+    double elevation = 4,
+    double borderRadius = 12,
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(vertical: 12),
+  }) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        padding: padding,
+      ),
+      icon: Icon(icon, color: iconColor),
+      label: Text(label, style: TextStyle(color: labelColor)),
+      onPressed: onTap,
     );
   }
 }
